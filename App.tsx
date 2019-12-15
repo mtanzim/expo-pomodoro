@@ -6,9 +6,8 @@ export default function App() {
   return (
     <React.Fragment>
       <View style={styles.container}>
-        <Text>Open up App.tsx to start working on your app!</Text>
-      </View>
       <Clock/>
+      </View>
     </React.Fragment>
   );
 }
