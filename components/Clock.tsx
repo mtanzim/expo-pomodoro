@@ -21,8 +21,8 @@ const Clock = ({
   const [timeLeft, setTimeLeft] = useState(defaultTime);
   const [overallTimeLeft, setOverallTimeLeft] = useState(defaultTime);
   const [startTime, setStartTime] = useState(Date.now());
-  const EPSILON = 0.0001;
   const [clockState, setClockState] = useState(ClockState.INIT);
+  const EPSILON = 0.0001;
 
   const reset = () => {
     setStartTime(Date.now());
