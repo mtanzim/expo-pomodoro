@@ -75,7 +75,7 @@ const Clock = ({
       clearTimeout(timer);
       setClockState(ClockState.DONE);
     }
-    return () => timer && clearTimeout(timer);
+    return () => clearTimeout(timer);
   }, [timeLeft, clockState]);
 
   const renderButtons = () => {
