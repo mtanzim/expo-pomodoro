@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Button, AppState } from "react-native";
+import { StyleSheet, Text, View, Button } from "react-native";
 
 enum ClockState {
   INIT,
@@ -8,7 +8,16 @@ enum ClockState {
   DONE
 }
 
-const Clock = ({ defaultTime = 0.1 * 60 }) => {
+enum ClockTypes {
+  WORK = "Working",
+  BREAK = "On Break"
+}
+
+const Clock = ({
+  defaultTime = 25 * 60,
+  title = "Developing",
+  clockType = ClockTypes.WORK
+}) => {
   const [timeLeft, setTimeLeft] = useState(defaultTime);
   const [overallTimeLeft, setOverallTimeLeft] = useState(defaultTime);
   const [startTime, setStartTime] = useState(Date.now());
@@ -23,7 +32,6 @@ const Clock = ({ defaultTime = 0.1 * 60 }) => {
   };
 
   const pause = () => {
-    // setPaused(true);
     setClockState(ClockState.PAUSED);
     setOverallTimeLeft(timeLeft);
   };
@@ -43,7 +51,16 @@ const Clock = ({ defaultTime = 0.1 * 60 }) => {
   const registerDone = () => {
     setTimeLeft(0);
     setClockState(ClockState.DONE);
+    // send data to backend/db etc here
   };
+
+  function displayTime(secondsIn: number): string {
+    const seconds: number = secondsIn % 60;
+    const minutes: number = Math.floor(secondsIn / 60);
+    const minStr: string = minutes < 10 ? `0${minutes}` : minutes.toString();
+    const secStr: string = seconds < 10 ? `0${seconds}` : seconds.toString();
+    return `${minStr}:${secStr}`;
+  }
 
   useEffect(() => {
     const timer = setTimeout(
@@ -59,7 +76,7 @@ const Clock = ({ defaultTime = 0.1 * 60 }) => {
       setClockState(ClockState.DONE);
     }
     return () => timer && clearTimeout(timer);
-  }, [timeLeft, clockState, reset]);
+  }, [timeLeft, clockState]);
 
   const renderButtons = () => {
     switch (clockState) {
@@ -88,7 +105,6 @@ const Clock = ({ defaultTime = 0.1 * 60 }) => {
         return (
           <React.Fragment>
             <Button onPress={start} title="Start"></Button>
-            <Text>Done</Text>
           </React.Fragment>
         );
     }
@@ -96,10 +112,13 @@ const Clock = ({ defaultTime = 0.1 * 60 }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <Text>{timeLeft}</Text>
-        {renderButtons()}
+      <View style={styles.timerContainer}>
+        <Text>{title}</Text>
+        <Text>{clockType}</Text>
+        <Text>{displayTime(timeLeft)}</Text>
+        {clockState === ClockState.DONE && <Text>Done</Text>}
       </View>
+      <View style={styles.buttonContainer}>{renderButtons()}</View>
     </View>
   );
 };
@@ -111,6 +130,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
+  timerContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
