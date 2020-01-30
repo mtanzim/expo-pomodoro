@@ -23,7 +23,7 @@ export const login = async (
     let responseJson = await response.json();
     if (responseJson.token !== undefined)
       return { token: responseJson.token, message: "Success" };
-    return { message: "Unknown error" };
+    return { message: "Failed to authenticate" };
   } catch (error) {
     console.error(error);
     return {
@@ -53,7 +53,7 @@ export const register = async (
     console.log(responseJson);
     if (responseJson.username)
       return { message: `${responseJson.username} registered!` };
-    return { message: "Unknown error" };
+    return { message: "Failed to register" };
   } catch (error) {
     console.error(error);
     return {

@@ -23,11 +23,13 @@ const Login = (props: IProps) => {
   const [password, setPass] = useState("");
   const [verPass, serVerPass] = useState("");
   const [pageState, setPageState] = useState(PageStates.LOGIN);
+  const [errMsg, setErrMsg] = useState<null | string>(null);
 
   const resetStates = () => {
     setUsername("");
     setPass("");
     serVerPass("");
+    // setErrMsg(null);
   };
 
   const handleSubmit = async () => {
@@ -36,6 +38,7 @@ const Login = (props: IProps) => {
         ? await login(username, password)
         : await register(username, password, verPass);
     if (authMsg.token) props.loginApp(authMsg.token);
+    if (authMsg.message) setErrMsg(authMsg.message);
     resetStates();
   };
   const togglePageState = (_newVal: boolean) => {
@@ -71,6 +74,7 @@ const Login = (props: IProps) => {
         />
       )}
       <Button onPress={handleSubmit} title={pageState}></Button>
+      {errMsg && <Text>{errMsg}</Text>}
     </View>
   );
 };
