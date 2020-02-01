@@ -10,12 +10,19 @@ import {
   Picker
 } from "react-native";
 import uuid from "uuid";
+import ToDoItem from "./ToDoItem";
 
 interface IToDo {
   id: string;
   category: string;
   title: string;
   remaining: number;
+}
+interface IListItemProps {
+  toDo: IToDo;
+  addOne: (id: string) => void;
+  remOne: (id: string) => void;
+  delTask: (id: string) => void;
 }
 
 interface ICategory {
@@ -47,25 +54,6 @@ const exampleCats: ICategory[] = [
   { id: uuid.v4(), name: "Car" },
   { id: uuid.v4(), name: "Berlin" }
 ];
-
-interface IListItemProps {
-  toDo: IToDo;
-  addOne: (id: string) => void;
-  remOne: (id: string) => void;
-  delTask: (id: string) => void;
-}
-const Item = ({ toDo, addOne, remOne, delTask }: IListItemProps) => {
-  return (
-    <View>
-      <Text>
-        {toDo.title}, {toDo.category}, {toDo.remaining}
-      </Text>
-      <Button onPress={_ev => addOne(toDo.id)} title={"+"} />
-      <Button onPress={_ev => remOne(toDo.id)} title={"-"} />
-      <Button onPress={_ev => delTask(toDo.id)} title={"DEL"} />
-    </View>
-  );
-};
 
 const ToDo = () => {
   const [curTasks, setCurTasks] = useState(exampleData);
@@ -104,6 +92,7 @@ const ToDo = () => {
   return (
     <View>
       <Text>To Do List</Text>
+      <View style={styles.container}>
       <TextInput
         placeholder={"New Task"}
         value={newTask}
@@ -122,10 +111,11 @@ const ToDo = () => {
         )}>
       </Picker>
       <Button onPress={addTask} title={"Add Task"}></Button>
+      </View>
       <FlatList
         data={curTasks}
         renderItem={({ item }) => (
-          <Item
+          <ToDoItem
             addOne={addQtyToTask(1)}
             remOne={addQtyToTask(-1)}
             delTask={delTask}
@@ -137,5 +127,13 @@ const ToDo = () => {
     </View>
   );
 };
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+});
 export default ToDo;
