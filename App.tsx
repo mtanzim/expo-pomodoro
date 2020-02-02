@@ -1,14 +1,15 @@
-import React, { useState, useReducer } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
-import Clock from "./components/Clock";
-import ToDo from "./components/ToDo";
-import Login from "./components/Login";
-
-import { ICategory, IToDo } from "./interfaces";
-import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "./actionTypes";
-import { taskReducer } from "./reducers";
+import React, { useReducer, useState } from "react";
+import { Button, StyleSheet, View } from "react-native";
 import uuid from "uuid";
+import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "./actionTypes";
+import Clock from "./components/Clock";
+import Login from "./components/Login";
+import ToDo from "./components/ToDo";
+import { IToDo } from "./interfaces";
+import { taskReducer } from "./reducers";
 
+
+const LOCALSTORAGE_KEY_NAME = "pomodoro-app-token";
 const exampleTasks: IToDo[] = [
   {
     id: uuid.v4(),
@@ -24,18 +25,6 @@ const exampleTasks: IToDo[] = [
   }
 ];
 
-const UNCATEGORIZED = "Uncategorized";
-const exampleCats: ICategory[] = [
-  { id: uuid.v4(), name: UNCATEGORIZED },
-  { id: uuid.v4(), name: "Work" },
-  { id: uuid.v4(), name: "Home" },
-  { id: uuid.v4(), name: "TTC" },
-  { id: uuid.v4(), name: "Car" },
-  { id: uuid.v4(), name: "Berlin" }
-];
-
-export const LOCALSTORAGE_KEY_NAME = "pomodoro-app-token";
-
 export default function App() {
   const [token, setToken] = useState(
     localStorage.getItem(LOCALSTORAGE_KEY_NAME)
@@ -48,8 +37,9 @@ export default function App() {
     localStorage.setItem(LOCALSTORAGE_KEY_NAME, token);
     setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
   };
+
   const [curTasks, taskDispatch] = useReducer(taskReducer, exampleTasks);
-  const addTask = (newTask:string, category:string) => {
+  const addTask = (newTask: string, category: string) => {
     taskDispatch({
       type: ADD_TODO,
       payload: {
@@ -82,7 +72,13 @@ export default function App() {
           <React.Fragment>
             <Button title="Log out" onPress={logoutApp} />
             <Clock />
-            <ToDo addQtyToTask={addQtyToTask} addTask={addTask} remQtyFromTask={remQtyFromTask} delTask={delTask} />
+            <ToDo
+              curTasks={curTasks}
+              addQtyToTask={addQtyToTask}
+              addTask={addTask}
+              remQtyFromTask={remQtyFromTask}
+              delTask={delTask}
+            />
           </React.Fragment>
         )}
       </View>

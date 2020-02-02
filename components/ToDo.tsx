@@ -11,14 +11,37 @@ import {
 } from "react-native";
 import uuid from "uuid";
 import ToDoItem from "./ToDoItem";
+import { IToDo, ICategory } from "../interfaces";
 
+const UNCATEGORIZED = "Uncategorized";
+const exampleCats: ICategory[] = [
+  { id: uuid.v4(), name: UNCATEGORIZED },
+  { id: uuid.v4(), name: "Work" },
+  { id: uuid.v4(), name: "Home" },
+  { id: uuid.v4(), name: "TTC" },
+  { id: uuid.v4(), name: "Car" },
+  { id: uuid.v4(), name: "Berlin" }
+];
 
-const ToDo = ({curTasks, taskDispatch, addQtyToTask, remQtyFromTask, delTask, addTask}) => {
+interface Props {
+  curTasks: IToDo[];
+  addQtyToTask: (id: string) => void;
+  remQtyFromTask: (id: string) => void;
+  delTask: (id: string) => void;
+  addTask: (newTask: string, category: string) => void;
+}
+
+const ToDo = ({
+  curTasks,
+  addQtyToTask,
+  remQtyFromTask,
+  delTask,
+  addTask
+}: Props) => {
   const [newTask, setNewTask] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<ICategory>(
     exampleCats[0]
   );
-
 
   return (
     <View>
@@ -41,7 +64,10 @@ const ToDo = ({curTasks, taskDispatch, addQtyToTask, remQtyFromTask, delTask, ad
           ))}
           )}>
         </Picker>
-        <Button onPress={() => addTask()} title={"Add Task"}></Button>
+        <Button
+          onPress={() => addTask(newTask, selectedCategory.name)}
+          title={"Add Task"}
+        ></Button>
       </View>
       <FlatList
         data={curTasks}
