@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useReducer } from "react";
 import {
   StyleSheet,
   Text,
@@ -30,7 +30,12 @@ interface ICategory {
   name: string;
 }
 
-const exampleData: IToDo[] = [
+interface IToDoAction {
+  type: string;
+  payload: IToDo;
+}
+
+const exampleTasks: IToDo[] = [
   {
     id: uuid.v4(),
     category: "day-job",
@@ -55,69 +60,97 @@ const exampleCats: ICategory[] = [
   { id: uuid.v4(), name: "Berlin" }
 ];
 
+const ADD_TODO = "ADD_TODO";
+const REM_TODO = "REM_TODO";
+const INCR_ONE = "INCR_ONE";
+const DECR_ONE = "DECR_ONE";
+
+const reducer = (state: IToDo[], action: IToDoAction) => {
+  const add_or_rem = (id: string, factor: number) =>
+    state.map((item: IToDo) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          remaining: item.remaining + factor > 1 ? item.remaining + factor : 1
+        };
+      }
+      return item;
+    });
+
+  switch (action.type) {
+    case ADD_TODO:
+      return [action.payload, ...state];
+    case REM_TODO:
+      return state.filter((item: IToDo) => item.id !== action.payload.id);
+    case INCR_ONE:
+      return add_or_rem(action.payload.id, 1);
+    case DECR_ONE:
+      return add_or_rem(action.payload.id, -1);
+    default:
+      throw new Error();
+  }
+};
+
 const ToDo = () => {
-  const [curTasks, setCurTasks] = useState(exampleData);
+  const [curTasks, dispatch] = useReducer(reducer, exampleTasks);
   const [newTask, setNewTask] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<ICategory>(
     exampleCats[0]
   );
   const addTask = () => {
-    setCurTasks([
-      {
+    dispatch({
+      type: ADD_TODO,
+      payload: {
         id: uuid.v4(),
         title: newTask,
         category: selectedCategory.name,
         remaining: 1
-      },
-      ...curTasks
-    ]);
+      }
+    });
     setNewTask("");
   };
-  const addQtyToTask = (factor: number) => (id: string) => {
-    setCurTasks(
-      curTasks.map((item: IToDo) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            remaining: item.remaining + factor > 1 ? item.remaining + factor : 1
-          };
-        }
-        return item;
-      })
-    );
+  const addQtyToTask = (id: string) => {
+    const taskToUpdate = curTasks.find(item => item.id === id);
+    taskToUpdate && dispatch({ type: INCR_ONE, payload: taskToUpdate });
   };
-  const delTask = (id: string) =>
-    setCurTasks(curTasks.filter((item: IToDo) => item.id !== id));
+  const remQtyFromTask = (id: string) => {
+    const taskToUpdate = curTasks.find(item => item.id === id); 
+    taskToUpdate && dispatch({ type: DECR_ONE, payload: taskToUpdate });
+  };
+  const delTask = (id: string) => {
+    const taskToUpdate = curTasks.find(item => item.id === id);
+    taskToUpdate && dispatch({ type: REM_TODO, payload: taskToUpdate });
+  };
 
   return (
     <View>
       <Text>To Do List</Text>
       <View style={styles.container}>
-      <TextInput
-        placeholder={"New Task"}
-        value={newTask}
-        onChangeText={text => setNewTask(text)}
-      />
-      <Picker
-        selectedValue={selectedCategory?.name}
-        style={{ height: 50, width: 200 }}
-        onValueChange={itemValue =>
-          setSelectedCategory({ id: itemValue.id, name: itemValue })
-        }
-      >
-        {exampleCats.map(item => (
-          <Picker.Item label={item.name} value={item.name} />
-        ))}
-        )}>
-      </Picker>
-      <Button onPress={addTask} title={"Add Task"}></Button>
+        <TextInput
+          placeholder={"New Task"}
+          value={newTask}
+          onChangeText={text => setNewTask(text)}
+        />
+        <Picker
+          selectedValue={selectedCategory?.name}
+          style={{ height: 50, width: 200 }}
+          onValueChange={itemValue =>
+            setSelectedCategory({ id: itemValue.id, name: itemValue })
+          }
+        >
+          {exampleCats.map(item => (
+            <Picker.Item label={item.name} value={item.name} />
+          ))}
+          )}>
+        </Picker>
+        <Button onPress={addTask} title={"Add Task"}></Button>
       </View>
       <FlatList
         data={curTasks}
         renderItem={({ item }) => (
           <ToDoItem
-            addOne={addQtyToTask(1)}
-            remOne={addQtyToTask(-1)}
+            addOne={() => addQtyToTask(item.id)}
+            remOne={() => remQtyFromTask(item.id)}
             delTask={delTask}
             toDo={item}
           />
@@ -133,7 +166,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "space-between",
-  },
+    justifyContent: "space-between"
+  }
 });
 export default ToDo;
