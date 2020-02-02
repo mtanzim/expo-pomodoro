@@ -1,46 +1,28 @@
-import React, { useState, useReducer } from "react";
+import React, { useState } from "react";
 import {
+  Button,
+  FlatList,
+  Picker,
   StyleSheet,
   Text,
-  View,
-  Button,
-  ScrollView,
-  FlatList,
   TextInput,
-  Picker
+  View
 } from "react-native";
 import uuid from "uuid";
+import { ICategory, IToDoProps } from "../interfaces";
 import ToDoItem from "./ToDoItem";
-import { IToDo, ICategory } from "../interfaces";
-
-const UNCATEGORIZED = "Uncategorized";
-const exampleCats: ICategory[] = [
-  { id: uuid.v4(), name: UNCATEGORIZED },
-  { id: uuid.v4(), name: "Work" },
-  { id: uuid.v4(), name: "Home" },
-  { id: uuid.v4(), name: "TTC" },
-  { id: uuid.v4(), name: "Car" },
-  { id: uuid.v4(), name: "Berlin" }
-];
-
-interface Props {
-  curTasks: IToDo[];
-  addQtyToTask: (id: string) => void;
-  remQtyFromTask: (id: string) => void;
-  delTask: (id: string) => void;
-  addTask: (newTask: string, category: string) => void;
-}
 
 const ToDo = ({
   curTasks,
+  categories,
   addQtyToTask,
   remQtyFromTask,
   delTask,
   addTask
-}: Props) => {
+}: IToDoProps) => {
   const [newTask, setNewTask] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<ICategory>(
-    exampleCats[0]
+    categories[0]
   );
 
   return (
@@ -59,7 +41,7 @@ const ToDo = ({
             setSelectedCategory({ id: itemValue.id, name: itemValue })
           }
         >
-          {exampleCats.map(item => (
+          {categories.map(item => (
             <Picker.Item label={item.name} value={item.name} />
           ))}
           )}>

@@ -5,11 +5,16 @@ import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "./actionTypes";
 import Clock from "./components/Clock";
 import Login from "./components/Login";
 import ToDo from "./components/ToDo";
-import { IToDo } from "./interfaces";
+import { IToDo,ICategory } from "./interfaces";
 import { taskReducer } from "./reducers";
 
-
 const LOCALSTORAGE_KEY_NAME = "pomodoro-app-token";
+const UNCATEGORIZED = "Uncategorized";
+const exampleCats: ICategory[] = [
+  { id: uuid.v4(), name: UNCATEGORIZED },
+  { id: uuid.v4(), name: "Work" },
+  { id: uuid.v4(), name: "Home" },
+];
 const exampleTasks: IToDo[] = [
   {
     id: uuid.v4(),
@@ -37,6 +42,8 @@ export default function App() {
     localStorage.setItem(LOCALSTORAGE_KEY_NAME, token);
     setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
   };
+
+  const [cats, setCats] = useState(exampleCats);
 
   const [curTasks, taskDispatch] = useReducer(taskReducer, exampleTasks);
   const addTask = (newTask: string, category: string) => {
@@ -78,6 +85,7 @@ export default function App() {
               addTask={addTask}
               remQtyFromTask={remQtyFromTask}
               delTask={delTask}
+              categories={cats}
             />
           </React.Fragment>
         )}

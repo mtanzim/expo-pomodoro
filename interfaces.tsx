@@ -14,3 +14,12 @@ export interface IToDoAction {
   type: string;
   payload: IToDo;
 }
+
+export interface IToDoProps {
+    curTasks: IToDo[];
+    categories: ICategory[];
+    addQtyToTask: (id: string) => void;
+    remQtyFromTask: (id: string) => void;
+    delTask: (id: string) => void;
+    addTask: (newTask: string, category: string) => void;
+  }
