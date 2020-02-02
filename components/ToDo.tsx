@@ -11,29 +11,9 @@ import {
 } from "react-native";
 import uuid from "uuid";
 import ToDoItem from "./ToDoItem";
-
-interface IToDo {
-  id: string;
-  category: string;
-  title: string;
-  remaining: number;
-}
-interface IListItemProps {
-  toDo: IToDo;
-  addOne: (id: string) => void;
-  remOne: (id: string) => void;
-  delTask: (id: string) => void;
-}
-
-interface ICategory {
-  id: string;
-  name: string;
-}
-
-interface IToDoAction {
-  type: string;
-  payload: IToDo;
-}
+import { ICategory, IToDo } from "../interfaces";
+import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "../actionTypes";
+import { taskReducer } from "../reducers";
 
 const exampleTasks: IToDo[] = [
   {
@@ -60,45 +40,14 @@ const exampleCats: ICategory[] = [
   { id: uuid.v4(), name: "Berlin" }
 ];
 
-const ADD_TODO = "ADD_TODO";
-const REM_TODO = "REM_TODO";
-const INCR_ONE = "INCR_ONE";
-const DECR_ONE = "DECR_ONE";
-
-const reducer = (state: IToDo[], action: IToDoAction) => {
-  const add_or_rem = (id: string, factor: number) =>
-    state.map((item: IToDo) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          remaining: item.remaining + factor > 1 ? item.remaining + factor : 1
-        };
-      }
-      return item;
-    });
-
-  switch (action.type) {
-    case ADD_TODO:
-      return [action.payload, ...state];
-    case REM_TODO:
-      return state.filter((item: IToDo) => item.id !== action.payload.id);
-    case INCR_ONE:
-      return add_or_rem(action.payload.id, 1);
-    case DECR_ONE:
-      return add_or_rem(action.payload.id, -1);
-    default:
-      throw new Error();
-  }
-};
-
 const ToDo = () => {
-  const [curTasks, dispatch] = useReducer(reducer, exampleTasks);
+  const [curTasks, taskDispatch] = useReducer(taskReducer, exampleTasks);
   const [newTask, setNewTask] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<ICategory>(
     exampleCats[0]
   );
   const addTask = () => {
-    dispatch({
+    taskDispatch({
       type: ADD_TODO,
       payload: {
         id: uuid.v4(),
@@ -111,15 +60,15 @@ const ToDo = () => {
   };
   const addQtyToTask = (id: string) => {
     const taskToUpdate = curTasks.find(item => item.id === id);
-    taskToUpdate && dispatch({ type: INCR_ONE, payload: taskToUpdate });
+    taskToUpdate && taskDispatch({ type: INCR_ONE, payload: taskToUpdate });
   };
   const remQtyFromTask = (id: string) => {
-    const taskToUpdate = curTasks.find(item => item.id === id); 
-    taskToUpdate && dispatch({ type: DECR_ONE, payload: taskToUpdate });
+    const taskToUpdate = curTasks.find(item => item.id === id);
+    taskToUpdate && taskDispatch({ type: DECR_ONE, payload: taskToUpdate });
   };
   const delTask = (id: string) => {
     const taskToUpdate = curTasks.find(item => item.id === id);
-    taskToUpdate && dispatch({ type: REM_TODO, payload: taskToUpdate });
+    taskToUpdate && taskDispatch({ type: REM_TODO, payload: taskToUpdate });
   };
 
   return (
