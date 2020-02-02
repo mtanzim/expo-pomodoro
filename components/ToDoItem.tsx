@@ -1,21 +1,7 @@
-import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  ScrollView,
-  FlatList,
-  TextInput,
-  Picker
-} from "react-native";
+import React from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+import { IListItemProps } from "../interfaces";
 
-interface IListItemProps {
-  toDo: IToDo;
-  addOne: (id: string) => void;
-  remOne: (id: string) => void;
-  delTask: (id: string) => void;
-}
 const ToDoItem = ({ toDo, addOne, remOne, delTask }: IListItemProps) => {
   return (
     <View style={styles.container}>
@@ -23,17 +9,14 @@ const ToDoItem = ({ toDo, addOne, remOne, delTask }: IListItemProps) => {
         {toDo.title}, {toDo.category}, {toDo.remaining}
       </Text>
       <Button
-        style={styles.button}
         onPress={_ev => addOne(toDo.id)}
         title={"+"}
       />
       <Button
-        style={styles.button}
         onPress={_ev => remOne(toDo.id)}
         title={"-"}
       />
       <Button
-        style={styles.button}
         onPress={_ev => delTask(toDo.id)}
         title={"DEL"}
       />

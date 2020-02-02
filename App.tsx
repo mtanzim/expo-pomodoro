@@ -5,7 +5,8 @@ import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "./actionTypes";
 import Clock from "./components/Clock";
 import Login from "./components/Login";
 import ToDo from "./components/ToDo";
-import { IToDo,ICategory } from "./interfaces";
+import Categories from "./components/Categories";
+import { IToDo, ICategory } from "./interfaces";
 import { taskReducer } from "./reducers";
 
 const LOCALSTORAGE_KEY_NAME = "pomodoro-app-token";
@@ -13,7 +14,7 @@ const UNCATEGORIZED = "Uncategorized";
 const exampleCats: ICategory[] = [
   { id: uuid.v4(), name: UNCATEGORIZED },
   { id: uuid.v4(), name: "Work" },
-  { id: uuid.v4(), name: "Home" },
+  { id: uuid.v4(), name: "Home" }
 ];
 const exampleTasks: IToDo[] = [
   {
@@ -63,11 +64,30 @@ export default function App() {
   };
   const remQtyFromTask = (id: string) => {
     const taskToUpdate = curTasks.find(item => item.id === id);
-    taskToUpdate && taskDispatch({ type: DECR_ONE, payload: taskToUpdate });
+    if (taskToUpdate) {
+      if (taskToUpdate.remaining === 1) {
+        delTask(id);
+        return;
+      }
+      taskDispatch({ type: DECR_ONE, payload: taskToUpdate });
+    }
   };
   const delTask = (id: string) => {
+    if (curTasks.length === 1)
+      throw new Error("Not allowed to remove last task");
     const taskToUpdate = curTasks.find(item => item.id === id);
     taskToUpdate && taskDispatch({ type: REM_TODO, payload: taskToUpdate });
+  };
+
+  const addCat = (name: string) => {
+    console.log(`Adding category ${name}`);
+    setCats([{ id: uuid.v4(), name }, ...cats]);
+  };
+  const remCat = (id: string) => {
+    if (cats.length === 1)
+      throw new Error("Not allowed to remove last category");
+    console.log(`Removing category ${id}`);
+    setCats(cats.filter(item => item.id !== id));
   };
 
   return (
@@ -78,7 +98,12 @@ export default function App() {
         ) : (
           <React.Fragment>
             <Button title="Log out" onPress={logoutApp} />
-            <Clock />
+            <Clock title={curTasks[0].title} category={curTasks[0].category} />
+            <Categories
+              categories={cats}
+              addCategory={addCat}
+              remCategory={remCat}
+            />
             <ToDo
               curTasks={curTasks}
               addQtyToTask={addQtyToTask}

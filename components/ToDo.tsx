@@ -35,7 +35,7 @@ const ToDo = ({
           onChangeText={text => setNewTask(text)}
         />
         <Picker
-          selectedValue={selectedCategory?.name}
+          selectedValue={selectedCategory.name}
           style={{ height: 50, width: 200 }}
           onValueChange={itemValue =>
             setSelectedCategory({ id: itemValue.id, name: itemValue })

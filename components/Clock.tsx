@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
+import { IClockProps, ClockTypes } from "../interfaces";
 
 enum ClockState {
   INIT,
@@ -8,16 +9,12 @@ enum ClockState {
   DONE
 }
 
-enum ClockTypes {
-  WORK = "Working",
-  BREAK = "On Break"
-}
-
 const Clock = ({
+  title,
+  category,
   defaultTime = 25 * 60,
-  title = "Developing",
   clockType = ClockTypes.WORK
-}) => {
+}: IClockProps) => {
   const [timeLeft, setTimeLeft] = useState(defaultTime);
   const [overallTimeLeft, setOverallTimeLeft] = useState(defaultTime);
   const [startTime, setStartTime] = useState(Date.now());
