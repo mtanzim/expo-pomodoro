@@ -40,11 +40,11 @@ const Categories = ({ categories, addCategory, remCategory }: ICatProps) => {
           Add
         </Button>
       </View>
-      <Surface style={styles.catContainer}>
+      <View style={styles.catContainer}>
         {categories.map((item, index) => (
           <Item category={item} rem={remCategory} key={index} />
         ))}
-      </Surface>
+      </View>
     </View>
   );
 };
@@ -55,15 +55,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    flexWrap: "wrap"
   },
   formContainer: {
     padding: 8,
     flex: 1,
-    // flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    flexWrap: "wrap"
   },
   item: {
     margin: 4

@@ -121,7 +121,6 @@ const Clock = ({
         <Title>{title}</Title>
         <Subheading>{category}</Subheading>
         <Text>{displayTime(timeLeft)}</Text>
-        {clockState === ClockState.DONE && <Text>Done</Text>}
         <ProgressBar progress={0.8} color={Colors.blue800} />
       </View>
       <View style={styles.buttonContainer}>{renderButtons()}</View>

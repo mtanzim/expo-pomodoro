@@ -1,14 +1,14 @@
 import React, { useReducer, useState } from "react";
-import { Button, StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Appbar, Provider as PaperProvider } from "react-native-paper";
 import uuid from "uuid";
 import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "./actionTypes";
+import Categories from "./components/Categories";
 import Clock from "./components/Clock";
 import Login from "./components/Login";
 import ToDo from "./components/ToDo";
-import Categories from "./components/Categories";
-import { IToDo, ICategory } from "./interfaces";
+import { ICategory, IToDo } from "./interfaces";
 import { taskReducer } from "./reducers";
-import { Provider as PaperProvider } from "react-native-paper";
 
 const LOCALSTORAGE_KEY_NAME = "pomodoro-app-token";
 const UNCATEGORIZED = "Uncategorized";
@@ -102,45 +102,39 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      {token === null ? (
+      {false ? (
         <Login loginApp={loginApp} />
       ) : (
         <View>
-          {/* Navbar */}
-          <View style={styles.nav}>
-            <Button title="Tomoto" onPress={() => setPage(TABS.TODO)} />
-            <Button
-              title="Categories"
+          <Appbar>
+            <Appbar.Action
+              icon="message-bulleted"
+              onPress={() => setPage(TABS.TODO)}
+            />
+            <Appbar.Action
+              icon="shape"
               onPress={() => setPage(TABS.CATEGORIES)}
             />
-            <Button title="Log out" onPress={logoutApp} />
-          </View>
-          {/* Logged in app content */}
-          <View>
-            {curPage === TABS.TODO && (
-              <>
-                <Clock
-                  title={curTasks[0].title}
-                  category={curTasks[0].category}
-                />
-                <ToDo
-                  curTasks={curTasks}
-                  addQtyToTask={addQtyToTask}
-                  addTask={addTask}
-                  remQtyFromTask={remQtyFromTask}
-                  delTask={delTask}
-                  categories={cats}
-                />
-              </>
-            )}
-            {curPage === TABS.CATEGORIES && (
-              <Categories
-                categories={cats}
-                addCategory={addCat}
-                remCategory={remCat}
-              />
-            )}
-          </View>
+            <Appbar.Action icon="logout" onPress={logoutApp} />
+          </Appbar>
+          <Clock title={curTasks[0].title} category={curTasks[0].category} />
+          {curPage === TABS.TODO && (
+            <ToDo
+              curTasks={curTasks}
+              addQtyToTask={addQtyToTask}
+              addTask={addTask}
+              remQtyFromTask={remQtyFromTask}
+              delTask={delTask}
+              categories={cats}
+            />
+          )}
+          {curPage === TABS.CATEGORIES && (
+            <Categories
+              categories={cats}
+              addCategory={addCat}
+              remCategory={remCat}
+            />
+          )}
         </View>
       )}
     </View>
@@ -156,7 +150,7 @@ const styles = StyleSheet.create({
   },
   nav: {
     flexDirection: "row",
-    justifyContent: "space-around"
+    justifyContent: "center"
   },
   navItem: {
     flex: 1,
