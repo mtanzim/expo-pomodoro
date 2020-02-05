@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
-import { IClockProps, ClockTypes } from "../interfaces";
-
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import {
+  Button,
+  Colors,
+  ProgressBar,
+  Subheading,
+  Surface,
+  Text,
+  Title
+} from "react-native-paper";
+import { ClockTypes, IClockProps } from "../interfaces";
 enum ClockState {
   INIT,
   RUNNING,
@@ -51,13 +59,13 @@ const Clock = ({
     // send data to backend/db etc here
   };
 
-  function displayTime(secondsIn: number): string {
+  const displayTime = (secondsIn: number): string => {
     const seconds: number = secondsIn % 60;
     const minutes: number = Math.floor(secondsIn / 60);
     const minStr: string = minutes < 10 ? `0${minutes}` : minutes.toString();
     const secStr: string = seconds < 10 ? `0${seconds}` : seconds.toString();
     return `${minStr}:${secStr}`;
-  }
+  };
 
   useEffect(() => {
     const timer = setTimeout(
@@ -80,43 +88,44 @@ const Clock = ({
       case ClockState.INIT:
         return (
           <React.Fragment>
-            <Button onPress={start} title="Start"></Button>
-            <Button onPress={stop} title="Stop"></Button>
+            <Button onPress={start}>Start</Button>
+            <Button onPress={stop}> Stop</Button>
           </React.Fragment>
         );
       case ClockState.RUNNING:
         return (
           <React.Fragment>
-            <Button onPress={pause} title="Pause"></Button>
-            <Button onPress={stop} title="Stop"></Button>
+            <Button onPress={pause}>Pause</Button>
+            <Button onPress={stop}>Stop</Button>
           </React.Fragment>
         );
       case ClockState.PAUSED:
         return (
           <React.Fragment>
-            <Button onPress={resume} title="Resume"></Button>
-            <Button onPress={registerDone} title="Complete"></Button>
+            <Button onPress={resume}>Resume</Button>
+            <Button onPress={registerDone}>Complete</Button>
           </React.Fragment>
         );
       case ClockState.DONE:
         return (
           <React.Fragment>
-            <Button onPress={start} title="Start"></Button>
+            <Button onPress={start}>Start</Button>
           </React.Fragment>
         );
     }
   };
 
   return (
-    <View style={styles.container}>
+    <Surface style={styles.container}>
       <View style={styles.timerContainer}>
-        <Text>{title}</Text>
-        <Text>{clockType}</Text>
+        <Title>{title}</Title>
+        <Subheading>{category}</Subheading>
         <Text>{displayTime(timeLeft)}</Text>
         {clockState === ClockState.DONE && <Text>Done</Text>}
+        <ProgressBar progress={0.8} color={Colors.blue800} />
       </View>
       <View style={styles.buttonContainer}>{renderButtons()}</View>
-    </View>
+    </Surface>
   );
 };
 
@@ -125,7 +134,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    // borderWidth: 1,
+    // borderColor: "black",
+    padding: 8
   },
   timerContainer: {
     flex: 1,
@@ -137,7 +149,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "space-between"
   }
 });
 export default Clock;

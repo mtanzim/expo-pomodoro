@@ -1,5 +1,5 @@
 import React, { useReducer, useState } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import { Button, StyleSheet, View, Text } from "react-native";
 import uuid from "uuid";
 import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "./actionTypes";
 import Clock from "./components/Clock";
@@ -8,6 +8,7 @@ import ToDo from "./components/ToDo";
 import Categories from "./components/Categories";
 import { IToDo, ICategory } from "./interfaces";
 import { taskReducer } from "./reducers";
+import { Provider as PaperProvider } from "react-native-paper";
 
 const LOCALSTORAGE_KEY_NAME = "pomodoro-app-token";
 const UNCATEGORIZED = "Uncategorized";
@@ -31,10 +32,18 @@ const exampleTasks: IToDo[] = [
   }
 ];
 
-export default function App() {
+enum TABS {
+  TODO,
+  CATEGORIES,
+  STATS,
+  PROFILE
+}
+
+const App = () => {
   const [token, setToken] = useState(
     localStorage.getItem(LOCALSTORAGE_KEY_NAME)
   );
+  const [curPage, setPage] = useState(TABS.TODO);
   const logoutApp = () => {
     localStorage.removeItem(LOCALSTORAGE_KEY_NAME);
     setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
@@ -72,9 +81,10 @@ export default function App() {
       taskDispatch({ type: DECR_ONE, payload: taskToUpdate });
     }
   };
-  const delTask = (id: string) => {
+  const delTask = (id: string): void => {
     if (curTasks.length === 1)
-      throw new Error("Not allowed to remove last task");
+      // throw new Error("Not allowed to remove last task");
+      return;
     const taskToUpdate = curTasks.find(item => item.id === id);
     taskToUpdate && taskDispatch({ type: REM_TODO, payload: taskToUpdate });
   };
@@ -91,33 +101,51 @@ export default function App() {
   };
 
   return (
-    <React.Fragment>
-      <View style={styles.container}>
-        {token === null ? (
-          <Login loginApp={loginApp} />
-        ) : (
-          <React.Fragment>
+    <View style={styles.container}>
+      {token === null ? (
+        <Login loginApp={loginApp} />
+      ) : (
+        <View>
+          {/* Navbar */}
+          <View style={styles.nav}>
+            <Button title="Tomoto" onPress={() => setPage(TABS.TODO)} />
+            <Button
+              title="Categories"
+              onPress={() => setPage(TABS.CATEGORIES)}
+            />
             <Button title="Log out" onPress={logoutApp} />
-            <Clock title={curTasks[0].title} category={curTasks[0].category} />
-            <Categories
-              categories={cats}
-              addCategory={addCat}
-              remCategory={remCat}
-            />
-            <ToDo
-              curTasks={curTasks}
-              addQtyToTask={addQtyToTask}
-              addTask={addTask}
-              remQtyFromTask={remQtyFromTask}
-              delTask={delTask}
-              categories={cats}
-            />
-          </React.Fragment>
-        )}
-      </View>
-    </React.Fragment>
+          </View>
+          {/* Logged in app content */}
+          <View>
+            {curPage === TABS.TODO && (
+              <>
+                <Clock
+                  title={curTasks[0].title}
+                  category={curTasks[0].category}
+                />
+                <ToDo
+                  curTasks={curTasks}
+                  addQtyToTask={addQtyToTask}
+                  addTask={addTask}
+                  remQtyFromTask={remQtyFromTask}
+                  delTask={delTask}
+                  categories={cats}
+                />
+              </>
+            )}
+            {curPage === TABS.CATEGORIES && (
+              <Categories
+                categories={cats}
+                addCategory={addCat}
+                remCategory={remCat}
+              />
+            )}
+          </View>
+        </View>
+      )}
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -125,5 +153,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
+  },
+  nav: {
+    flexDirection: "row",
+    justifyContent: "space-around"
+  },
+  navItem: {
+    flex: 1,
+    alignItems: "center",
+    padding: 10
   }
 });
+
+export default function Main() {
+  return (
+    <PaperProvider>
+      <App />
+    </PaperProvider>
+  );
+}
