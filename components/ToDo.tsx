@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Button,
   FlatList,
   Picker,
   StyleSheet,
@@ -10,6 +9,7 @@ import {
 } from "react-native";
 import uuid from "uuid";
 import { ICategory, IToDoProps } from "../interfaces";
+import { DataTable, Button } from "react-native-paper";
 import ToDoItem from "./ToDoItem";
 
 const ToDo = ({
@@ -27,7 +27,6 @@ const ToDo = ({
 
   return (
     <View>
-      <Text>To Do List</Text>
       <View style={styles.container}>
         <TextInput
           placeholder={"New Task"}
@@ -46,23 +45,48 @@ const ToDo = ({
           ))}
           )}>
         </Picker>
-        <Button
-          onPress={() => addTask(newTask, selectedCategory.name)}
-          title={"Add Task"}
-        ></Button>
+        <Button onPress={() => addTask(newTask, selectedCategory.name)}>
+          Add Task
+        </Button>
       </View>
-      <FlatList
-        data={curTasks}
-        renderItem={({ item }) => (
-          <ToDoItem
-            addOne={() => addQtyToTask(item.id)}
-            remOne={() => remQtyFromTask(item.id)}
-            delTask={delTask}
-            toDo={item}
-          />
-        )}
-        keyExtractor={item => item.id}
-      />
+      <DataTable>
+        <DataTable.Header>
+          <DataTable.Title>Task</DataTable.Title>
+          <DataTable.Title>Category</DataTable.Title>
+          <DataTable.Title numeric>Remaining</DataTable.Title>
+          <DataTable.Title numeric>{""}</DataTable.Title>
+          <DataTable.Title numeric>{""}</DataTable.Title>
+          <DataTable.Title numeric>{""}</DataTable.Title>
+        </DataTable.Header>
+        {curTasks.map(task => (
+          <DataTable.Row>
+            <DataTable.Cell>{task.title}</DataTable.Cell>
+            <DataTable.Cell>{task.category}</DataTable.Cell>
+            <DataTable.Cell numeric>{task.remaining}</DataTable.Cell>
+            <DataTable.Cell>
+              <Button
+                icon="plus"
+                onPress={() => addQtyToTask(task.id)}
+                children={""}
+              />
+            </DataTable.Cell>
+            <DataTable.Cell>
+              <Button
+                icon="minus"
+                onPress={() => remQtyFromTask(task.id)}
+                children={""}
+              />
+            </DataTable.Cell>
+            <DataTable.Cell>
+              <Button
+                icon="delete"
+                onPress={() => delTask(task.id)}
+                children={""}
+              />
+            </DataTable.Cell>
+          </DataTable.Row>
+        ))}
+      </DataTable>
     </View>
   );
 };
@@ -73,6 +97,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "space-between"
+  },
+  actionCell: {
+    flex: 1,
+    flexDirection: "row",
+    overflow: "visible",
+    width: 400
   }
 });
 export default ToDo;
