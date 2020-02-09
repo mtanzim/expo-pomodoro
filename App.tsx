@@ -1,6 +1,10 @@
 import React, { useReducer, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Appbar, Provider as PaperProvider } from "react-native-paper";
+import {
+  Appbar,
+  Provider as PaperProvider,
+  Snackbar
+} from "react-native-paper";
 import uuid from "uuid";
 import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "./actionTypes";
 import Categories from "./components/Categories";
@@ -44,19 +48,27 @@ const App = () => {
     localStorage.getItem(LOCALSTORAGE_KEY_NAME)
   );
   const [curPage, setPage] = useState(TABS.TODO);
+  const [snackMsg, setSnackMsg] = useState("");
+
   const logoutApp = () => {
     localStorage.removeItem(LOCALSTORAGE_KEY_NAME);
     setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
+    setSnackMsg("Logged out")
   };
   const loginApp = (token: string) => {
     localStorage.setItem(LOCALSTORAGE_KEY_NAME, token);
     setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
+    setSnackMsg("Welcome")
   };
 
   const [cats, setCats] = useState(exampleCats);
 
   const [curTasks, taskDispatch] = useReducer(taskReducer, exampleTasks);
   const addTask = (newTask: string, category: string) => {
+    if (newTask === "") {
+      setSnackMsg("Task cannot be empty!");
+      return;
+    }
     taskDispatch({
       type: ADD_TODO,
       payload: {
@@ -82,21 +94,26 @@ const App = () => {
     }
   };
   const delTask = (id: string): void => {
-    if (curTasks.length === 1)
-      // throw new Error("Not allowed to remove last task");
+    if (curTasks.length === 1) {
+      setSnackMsg("Cannot remove the final task!");
       return;
+    }
     const taskToUpdate = curTasks.find(item => item.id === id);
     taskToUpdate && taskDispatch({ type: REM_TODO, payload: taskToUpdate });
   };
 
   const addCat = (name: string) => {
-    console.log(`Adding category ${name}`);
+    if (name === "") {
+      setSnackMsg("Category cannot be empty!");
+      return;
+    }
     setCats([{ id: uuid.v4(), name }, ...cats]);
   };
   const remCat = (id: string) => {
-    if (cats.length === 1)
-      throw new Error("Not allowed to remove last category");
-    console.log(`Removing category ${id}`);
+    if (cats.length === 1) {
+      setSnackMsg("Cannot remove the final category!");
+      return;
+    }
     setCats(cats.filter(item => item.id !== id));
   };
 
@@ -137,6 +154,9 @@ const App = () => {
           )}
         </View>
       )}
+      <Snackbar visible={snackMsg !== ""} onDismiss={() => setSnackMsg("")}>
+        {snackMsg}
+      </Snackbar>
     </View>
   );
 };

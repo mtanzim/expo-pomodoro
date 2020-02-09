@@ -1,16 +1,13 @@
 import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
 import {
-  FlatList,
-  Picker,
-  StyleSheet,
-  Text,
-  TextInput,
-  View
-} from "react-native";
-import uuid from "uuid";
+  Chip,
+  DataTable,
+  IconButton,
+  Menu,
+  TextInput
+} from "react-native-paper";
 import { ICategory, IToDoProps } from "../interfaces";
-import { DataTable, Button } from "react-native-paper";
-import ToDoItem from "./ToDoItem";
 
 const ToDo = ({
   curTasks,
@@ -21,33 +18,43 @@ const ToDo = ({
   addTask
 }: IToDoProps) => {
   const [newTask, setNewTask] = useState("");
+  const [catVisible, setCatVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ICategory>(
     categories[0]
   );
+
+
+  const pickCat = (id: string) => {
+    setSelectedCategory(categories.find(cat => cat.id === id) || categories[0]);
+    setCatVisible(false);
+  };
 
   return (
     <View>
       <View style={styles.container}>
         <TextInput
-          placeholder={"New Task"}
+          placeholder="New Task"
           value={newTask}
           onChangeText={text => setNewTask(text)}
         />
-        <Picker
-          selectedValue={selectedCategory.name}
-          style={{ height: 50, width: 200 }}
-          onValueChange={itemValue =>
-            setSelectedCategory({ id: itemValue.id, name: itemValue })
+
+        <Menu
+          visible={catVisible}
+          onDismiss={() => setCatVisible(false)}
+          anchor={
+            <Chip icon="chevron-down" onPress={() => setCatVisible(true)}>
+              {selectedCategory.name}
+            </Chip>
           }
         >
           {categories.map(item => (
-            <Picker.Item label={item.name} value={item.name} />
+            <Menu.Item onPress={() => pickCat(item.id)} title={item.name} />
           ))}
-          )}>
-        </Picker>
-        <Button onPress={() => addTask(newTask, selectedCategory.name)}>
-          Add Task
-        </Button>
+        </Menu>
+        <IconButton
+          icon="flag-plus"
+          onPress={() => addTask(newTask, selectedCategory.name)}
+        />
       </View>
       <DataTable>
         <DataTable.Header>
@@ -64,25 +71,16 @@ const ToDo = ({
             <DataTable.Cell>{task.category}</DataTable.Cell>
             <DataTable.Cell numeric>{task.remaining}</DataTable.Cell>
             <DataTable.Cell>
-              <Button
-                icon="plus"
-                onPress={() => addQtyToTask(task.id)}
-                children={""}
-              />
+              <IconButton icon="plus" onPress={() => addQtyToTask(task.id)} />
             </DataTable.Cell>
             <DataTable.Cell>
-              <Button
+              <IconButton
                 icon="minus"
                 onPress={() => remQtyFromTask(task.id)}
-                children={""}
               />
             </DataTable.Cell>
             <DataTable.Cell>
-              <Button
-                icon="delete"
-                onPress={() => delTask(task.id)}
-                children={""}
-              />
+              <IconButton icon="delete" onPress={() => delTask(task.id)} />
             </DataTable.Cell>
           </DataTable.Row>
         ))}

@@ -1,17 +1,7 @@
 import React, { useState } from "react";
-import { StyleSheet, FlatList, View } from "react-native";
-import { ICatProps, ICategory } from "../interfaces";
-import {
-  Button,
-  Colors,
-  ProgressBar,
-  Subheading,
-  Surface,
-  Text,
-  Title,
-  TextInput,
-  Chip
-} from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { Chip, IconButton, TextInput, HelperText } from "react-native-paper";
+import { ICategory, ICatProps } from "../interfaces";
 const Item = ({
   category,
   rem
@@ -27,6 +17,11 @@ const Item = ({
 const Categories = ({ categories, addCategory, remCategory }: ICatProps) => {
   const [newCat, setNewCat] = useState("");
 
+  const ownAddCategory = () => {
+    addCategory(newCat);
+    setNewCat("");
+  };
+
   return (
     <View>
       <View style={styles.formContainer}>
@@ -34,11 +29,9 @@ const Categories = ({ categories, addCategory, remCategory }: ICatProps) => {
           mode="outlined"
           placeholder={"New category"}
           value={newCat}
-          onChangeText={text => setNewCat(text)}
+          onChangeText={setNewCat}
         />
-        <Button onPress={() => addCategory(newCat)} mode="contained">
-          Add
-        </Button>
+        <IconButton icon="plus" onPress={ownAddCategory} />
       </View>
       <View style={styles.catContainer}>
         {categories.map((item, index) => (
@@ -54,13 +47,19 @@ const styles = StyleSheet.create({
     margin: 4,
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
+  },
+  textContainer: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center"
   },
   formContainer: {
     padding: 8,
     flex: 1,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   item: {
     margin: 4
