@@ -134,9 +134,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    // borderWidth: 1,
-    // borderColor: "black",
+    alignSelf: "center",
+    margin: 8,
+    width: "50%",
+    minHeight: 200,
+    maxHeight: 200,
     padding: 8
+    // borderColor: 'green',
+    // borderWidth: 2,
   },
   timerContainer: {
     flex: 1,

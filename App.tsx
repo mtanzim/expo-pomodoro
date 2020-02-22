@@ -53,18 +53,18 @@ const App = () => {
   const logoutApp = () => {
     localStorage.removeItem(LOCALSTORAGE_KEY_NAME);
     setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
-    setSnackMsg("Logged out")
+    setSnackMsg("Logged out");
   };
   const loginApp = (token: string) => {
     localStorage.setItem(LOCALSTORAGE_KEY_NAME, token);
     setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
-    setSnackMsg("Welcome")
+    setSnackMsg("Welcome");
   };
 
   const [cats, setCats] = useState(exampleCats);
 
   const [curTasks, taskDispatch] = useReducer(taskReducer, exampleTasks);
-  const addTask = (newTask: string, category: string) => {
+  const addTask = (newTask: string, category: string, qty: number) => {
     if (newTask === "") {
       setSnackMsg("Task cannot be empty!");
       return;
@@ -75,7 +75,7 @@ const App = () => {
         id: uuid.v4(),
         title: newTask,
         category,
-        remaining: 1
+        remaining: qty
       }
     });
   };
@@ -165,8 +165,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
+    alignItems: "stretch",
+    justifyContent: "flex-start",
+    alignContent: "flex-start",
+
   },
   nav: {
     flexDirection: "row",

@@ -22,85 +22,125 @@ const ToDo = ({
   const [selectedCategory, setSelectedCategory] = useState<ICategory>(
     categories[0]
   );
-
+  const [qtyTasksToAdd, setQtyTasksToAdd] = useState(1);
 
   const pickCat = (id: string) => {
     setSelectedCategory(categories.find(cat => cat.id === id) || categories[0]);
     setCatVisible(false);
   };
 
-  return (
-    <View>
-      <View style={styles.container}>
-        <TextInput
-          placeholder="New Task"
-          value={newTask}
-          onChangeText={text => setNewTask(text)}
-        />
+  const addTaskAndClear = () => {
+    addTask(newTask, selectedCategory.name, qtyTasksToAdd);
+    setNewTask("");
+    setQtyTasksToAdd(1);
+  };
 
-        <Menu
-          visible={catVisible}
-          onDismiss={() => setCatVisible(false)}
-          anchor={
-            <Chip icon="chevron-down" onPress={() => setCatVisible(true)}>
-              {selectedCategory.name}
-            </Chip>
-          }
-        >
-          {categories.map(item => (
-            <Menu.Item onPress={() => pickCat(item.id)} title={item.name} />
-          ))}
-        </Menu>
-        <IconButton
-          icon="flag-plus"
-          onPress={() => addTask(newTask, selectedCategory.name)}
-        />
-      </View>
-      <DataTable>
-        <DataTable.Header>
-          <DataTable.Title>Task</DataTable.Title>
-          <DataTable.Title>Category</DataTable.Title>
-          <DataTable.Title numeric>Remaining</DataTable.Title>
-          <DataTable.Title numeric>{""}</DataTable.Title>
-          <DataTable.Title numeric>{""}</DataTable.Title>
-          <DataTable.Title numeric>{""}</DataTable.Title>
-        </DataTable.Header>
-        {curTasks.map(task => (
+  return (
+    <View style={styles.container}>
+      <View style={styles.tableContainer}>
+        <DataTable>
+          <DataTable.Header>
+            <DataTable.Title>Task</DataTable.Title>
+            <DataTable.Title>Category</DataTable.Title>
+            <DataTable.Title numeric>Remaining</DataTable.Title>
+            <DataTable.Title numeric>{""}</DataTable.Title>
+            <DataTable.Title numeric>{""}</DataTable.Title>
+            <DataTable.Title numeric>{""}</DataTable.Title>
+          </DataTable.Header>
           <DataTable.Row>
-            <DataTable.Cell>{task.title}</DataTable.Cell>
-            <DataTable.Cell>{task.category}</DataTable.Cell>
-            <DataTable.Cell numeric>{task.remaining}</DataTable.Cell>
             <DataTable.Cell>
-              <IconButton icon="plus" onPress={() => addQtyToTask(task.id)} />
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                dense
+                placeholder="New Task"
+                value={newTask}
+                onChangeText={text => setNewTask(text)}
+              />
+            </DataTable.Cell>
+            <DataTable.Cell>
+              <Menu
+                visible={catVisible}
+                onDismiss={() => setCatVisible(false)}
+                anchor={
+                  <Chip
+                    style={styles.chip}
+                    mode="outlined"
+                    icon="chevron-down"
+                    onPress={() => setCatVisible(true)}
+                  >
+                    {selectedCategory.name}
+                  </Chip>
+                }
+              >
+                {categories.map(item => (
+                  <Menu.Item
+                    onPress={() => pickCat(item.id)}
+                    title={item.name}
+                  />
+                ))}
+              </Menu>
+            </DataTable.Cell>
+            <DataTable.Cell numeric>{qtyTasksToAdd}</DataTable.Cell>
+            <DataTable.Cell>
+              <IconButton
+                icon="plus"
+                onPress={() => setQtyTasksToAdd(qtyTasksToAdd + 1)}
+              />
             </DataTable.Cell>
             <DataTable.Cell>
               <IconButton
                 icon="minus"
-                onPress={() => remQtyFromTask(task.id)}
+                onPress={() =>
+                  setQtyTasksToAdd(qtyTasksToAdd === 1 ? 1 : qtyTasksToAdd - 1)
+                }
               />
             </DataTable.Cell>
             <DataTable.Cell>
-              <IconButton icon="delete" onPress={() => delTask(task.id)} />
+              <IconButton icon="flag-plus" onPress={addTaskAndClear} />
             </DataTable.Cell>
           </DataTable.Row>
-        ))}
-      </DataTable>
+          {curTasks.map(task => (
+            <DataTable.Row>
+              <DataTable.Cell>{task.title}</DataTable.Cell>
+              <DataTable.Cell>{task.category}</DataTable.Cell>
+              <DataTable.Cell numeric>{task.remaining}</DataTable.Cell>
+              <DataTable.Cell>
+                <IconButton icon="plus" onPress={() => addQtyToTask(task.id)} />
+              </DataTable.Cell>
+              <DataTable.Cell>
+                <IconButton
+                  icon="minus"
+                  onPress={() => remQtyFromTask(task.id)}
+                />
+              </DataTable.Cell>
+              <DataTable.Cell>
+                <IconButton icon="delete" onPress={() => delTask(task.id)} />
+              </DataTable.Cell>
+            </DataTable.Row>
+          ))}
+        </DataTable>
+      </View>
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "space-between"
+    width: "50%",
+    // flexDirection: "row",
+    alignSelf: "center"
   },
-  actionCell: {
-    flex: 1,
-    flexDirection: "row",
-    overflow: "visible",
-    width: 400
+  textInput: {
+    width: "80%",
+    marginRight: 2,
+    marginBottom: 4
+  },
+  chip: {
+    width: "80%"
+  },
+  tableContainer: {
+    flex: 1
   }
 });
 export default ToDo;

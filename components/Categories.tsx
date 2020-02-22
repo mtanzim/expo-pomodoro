@@ -23,7 +23,7 @@ const Categories = ({ categories, addCategory, remCategory }: ICatProps) => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.formContainer}>
         <TextInput
           mode="outlined"
@@ -43,11 +43,24 @@ const Categories = ({ categories, addCategory, remCategory }: ICatProps) => {
 };
 
 const styles = StyleSheet.create({
-  catContainer: {
-    margin: 4,
+  container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    alignSelf:"center",
+    margin: 8,
+    width: "50%",
+    // height: 200,
+    // maxHeight:200,
+    // padding: 8,
+  },
+  catContainer: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    margin: 4,
+    alignItems: "center",
+    justifyContent: "flex-start"
   },
   textContainer: {
     flex: 1,

@@ -21,7 +21,7 @@ export interface IToDoProps {
   addQtyToTask: (id: string) => void;
   remQtyFromTask: (id: string) => void;
   delTask: (id: string) => void;
-  addTask: (newTask: string, category: string) => void;
+  addTask: (newTask: string, category: string, qty: number) => void;
 }
 
 export enum ClockTypes {
@@ -45,6 +45,6 @@ export interface IListItemProps {
 
 export interface ICatProps {
   categories: ICategory[];
-  addCategory: (name:string) => void;
-  remCategory: (id:string) => void;
+  addCategory: (name: string) => void;
+  remCategory: (id: string) => void;
 }
