@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useReducer, useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   Appbar,
@@ -64,6 +64,10 @@ const App = () => {
   const [cats, setCats] = useState(exampleCats);
 
   const [curTasks, taskDispatch] = useReducer(taskReducer, exampleTasks);
+
+  // come to todo on login
+  useEffect(() => setPage(TABS.TODO), [token]);
+
   const addTask = (newTask: string, category: string, qty: number) => {
     if (newTask === "") {
       setSnackMsg("Task cannot be empty!");
@@ -119,8 +123,8 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      {false ? (
-        <Login loginApp={loginApp} />
+      {!token ? (
+        <Login loginApp={loginApp} setErrMsg={setSnackMsg} />
       ) : (
         <View>
           <Appbar>
@@ -150,6 +154,7 @@ const App = () => {
               categories={cats}
               addCategory={addCat}
               remCategory={remCat}
+              setSnackMsg={setSnackMsg}
             />
           )}
         </View>
@@ -167,8 +172,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "stretch",
     justifyContent: "flex-start",
-    alignContent: "flex-start",
-
+    alignContent: "flex-start"
   },
   nav: {
     flexDirection: "row",

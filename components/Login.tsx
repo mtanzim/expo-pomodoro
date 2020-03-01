@@ -16,14 +16,15 @@ enum PageStates {
 
 interface IProps {
   loginApp: (token: string) => void;
+  setErrMsg: (msg: string) => void;
 }
 
-const Login = (props: IProps) => {
+const Login = ({ setErrMsg, loginApp }: IProps) => {
   const [username, setUsername] = useState("");
   const [password, setPass] = useState("");
   const [verPass, serVerPass] = useState("");
   const [pageState, setPageState] = useState(PageStates.LOGIN);
-  const [errMsg, setErrMsg] = useState<null | string>(null);
+  // const [errMsg, setErrMsg] = useState<null | string>(null);
 
   const resetStates = () => {
     setUsername("");
@@ -33,13 +34,17 @@ const Login = (props: IProps) => {
   };
 
   const handleSubmit = async () => {
-    const authMsg =
-      pageState === PageStates.LOGIN
-        ? await login(username, password)
-        : await register(username, password, verPass);
-    if (authMsg.token) props.loginApp(authMsg.token);
-    if (authMsg.message) setErrMsg(authMsg.message);
-    resetStates();
+    try {
+      const authMsg =
+        pageState === PageStates.LOGIN
+          ? await login(username, password)
+          : await register(username, password, verPass);
+      if (authMsg.token) loginApp(authMsg.token);
+      if (authMsg.message) setErrMsg(authMsg.message);
+      resetStates();
+    } catch (err) {
+      setErrMsg(err.message);
+    }
   };
   const togglePageState = (_newVal: boolean) => {
     pageState === PageStates.LOGIN
@@ -48,7 +53,7 @@ const Login = (props: IProps) => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <Switch
         value={pageState === PageStates.REGISTER}
         onValueChange={togglePageState}
@@ -74,9 +79,18 @@ const Login = (props: IProps) => {
         />
       )}
       <Button onPress={handleSubmit} title={pageState}></Button>
-      {errMsg && <Text>{errMsg}</Text>}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: "20%",
+    // flexDirection: "row",
+    alignSelf: "center",
+    justifyContent: "center"
+  }
+});
 
 export default Login;

@@ -1,4 +1,9 @@
 const BASE_URL = "http://localhost:3000";
+const LOCALSTORAGE_KEY_NAME = "pomodoro-app-token";
+
+export const getToken = () =>
+  `Bearer ${localStorage.getItem(LOCALSTORAGE_KEY_NAME) || ""}`;
+
 interface AuthMsg {
   auth?: boolean;
   token?: string;
@@ -61,3 +66,42 @@ export const register = async (
     };
   }
 };
+
+export interface ICatRes {
+  name: string;
+  id: number;
+}
+export interface ICatPost {
+  name: string;
+}
+
+export interface ICatErr {
+  message: string;
+}
+
+export class CategoriesRequests {
+  static isErr(payload: ICatErr | ICatRes): payload is ICatErr {
+    return (payload as ICatErr).message !== undefined;
+  }
+
+  async addCat(payload: ICatPost): Promise<ICatRes | ICatErr> {
+    try {
+      let response = await fetch(`${BASE_URL}/api/cat/`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: getToken(),
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+      let responseJson = await response.json();
+      console.log(response);
+      return responseJson;
+    } catch (error) {
+      return {
+        message: error
+      };
+    }
+  }
+}

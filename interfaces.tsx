@@ -47,4 +47,5 @@ export interface ICatProps {
   categories: ICategory[];
   addCategory: (name: string) => void;
   remCategory: (id: string) => void;
+  setSnackMsg: (msg: string) => void;
 }

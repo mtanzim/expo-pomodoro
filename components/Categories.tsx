@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Chip, IconButton, TextInput, HelperText } from "react-native-paper";
 import { ICategory, ICatProps } from "../interfaces";
+import { CategoriesRequests, ICatErr, ICatRes } from "../services";
+
 const Item = ({
   category,
   rem
@@ -14,12 +16,28 @@ const Item = ({
   </Chip>
 );
 
-const Categories = ({ categories, addCategory, remCategory }: ICatProps) => {
+const catServices = new CategoriesRequests();
+
+const Categories = ({
+  categories,
+  addCategory,
+  remCategory,
+  setSnackMsg
+}: ICatProps) => {
   const [newCat, setNewCat] = useState("");
 
-  const ownAddCategory = () => {
-    addCategory(newCat);
-    setNewCat("");
+  const ownAddCategory = async () => {
+    const res = await catServices.addCat({ name: newCat });
+    if (CategoriesRequests.isErr(res)) {
+      setSnackMsg(res.message);
+      setNewCat("");
+    } else {
+      const { name } = res;
+      if (name) {
+        addCategory(name);
+        setNewCat("");
+      }
+    }
   };
 
   return (
@@ -31,7 +49,7 @@ const Categories = ({ categories, addCategory, remCategory }: ICatProps) => {
           value={newCat}
           onChangeText={setNewCat}
         />
-        <IconButton icon="plus" onPress={ownAddCategory} />
+        <IconButton icon="plus" onPress={ownAddCategory as any} />
       </View>
       <View style={styles.catContainer}>
         {categories.map((item, index) => (
@@ -47,9 +65,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    alignSelf:"center",
+    alignSelf: "center",
     margin: 8,
-    width: "50%",
+    width: "50%"
     // height: 200,
     // maxHeight:200,
     // padding: 8,
