@@ -1,9 +1,6 @@
 import { BASE_URL, getToken } from "./index";
+import { ICategory } from "../interfaces";
 
-export interface ICatRes {
-  id: number;
-  name: string;
-}
 export interface ICatPost {
   name: string;
 }
@@ -13,13 +10,38 @@ export interface ICatErr {
 }
 
 export class CategoriesRequests {
-  static isErr(payload: ICatErr | ICatRes): payload is ICatErr {
+  static isErr(payload: ICatErr | ICategory | ICategory[]): payload is ICatErr {
     return (payload as ICatErr).message !== undefined;
   }
+  static isMultiple(payload: ICategory | ICategory[]): payload is ICategory[] {
+    return (
+      (payload as ICategory[]).length !== undefined && Array.isArray(payload)
+    );
+  }
 
-  async addCat(payload: ICatPost): Promise<ICatRes | ICatErr> {
+  async getCat(): Promise<ICategory[] | ICatErr> {
     try {
-      let response = await fetch(`${BASE_URL}/api/cat/`, {
+      const response = await fetch(`${BASE_URL}/api/cat/`, {
+        method: "GET",
+        headers: {
+          // Accept: "application/json",
+          Authorization: getToken(),
+          "Content-Type": "application/json"
+        }
+      });
+      const responseJson = await response.json();
+      console.log(responseJson);
+      return responseJson;
+    } catch (error) {
+      return {
+        message: error
+      };
+    }
+  }
+
+  async addCat(payload: ICatPost): Promise<ICategory | ICatErr> {
+    try {
+      const response = await fetch(`${BASE_URL}/api/cat/`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -28,7 +50,7 @@ export class CategoriesRequests {
         },
         body: JSON.stringify(payload)
       });
-      let responseJson = await response.json();
+      const responseJson = await response.json();
       console.log(responseJson);
       return responseJson;
     } catch (error) {

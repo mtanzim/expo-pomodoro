@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Chip, IconButton, TextInput, HelperText } from "react-native-paper";
 import { ICategory, ICatProps } from "../interfaces";
-import { CategoriesRequests, ICatErr, ICatRes } from "../services/Categories";
+import { CategoriesRequests } from "../services/Categories";
 
 const Item = ({
   category,
@@ -19,14 +19,37 @@ const Item = ({
 const catServices = new CategoriesRequests();
 
 const Categories = ({
-  categories,
-  addCategory,
+  // categories,
+  // addCategory,
   remCategory,
   setSnackMsg
 }: ICatProps) => {
   const [newCat, setNewCat] = useState("");
+  const [categories, setCategories] = useState<ICategory[]>([]);
 
-  const ownAddCategory = async () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await catServices.getCat();
+        console.log(res);
+        if (CategoriesRequests.isErr(res)) {
+          setSnackMsg(res.message);
+          return;
+        }
+        if (CategoriesRequests.isMultiple(res)) {
+          setCategories(res);
+          return;
+        }
+        throw new Error("Something went wrong!");
+      } catch (err) {
+        setCategories([]);
+        setSnackMsg(err?.message);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const addCategory = async () => {
     const res = await catServices.addCat({ name: newCat });
     if (CategoriesRequests.isErr(res)) {
       setSnackMsg(res.message);
@@ -34,7 +57,7 @@ const Categories = ({
     } else {
       const { name } = res;
       if (name) {
-        addCategory(name);
+        setCategories(curCat => curCat.concat(res));
         setNewCat("");
       }
     }
@@ -49,11 +72,11 @@ const Categories = ({
           value={newCat}
           onChangeText={setNewCat}
         />
-        <IconButton icon="plus" onPress={ownAddCategory as any} />
+        <IconButton icon="plus" onPress={addCategory as any} />
       </View>
       <View style={styles.catContainer}>
-        {categories.map((item, index) => (
-          <Item category={item} rem={remCategory} key={index} />
+        {categories.map(item => (
+          <Item category={item} rem={remCategory} key={item.id} />
         ))}
       </View>
     </View>
@@ -68,9 +91,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     margin: 8,
     width: "50%"
-    // height: 200,
-    // maxHeight:200,
-    // padding: 8,
   },
   catContainer: {
     flex: 1,
