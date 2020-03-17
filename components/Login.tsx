@@ -7,7 +7,8 @@ import {
   Switch,
   TextInput
 } from "react-native";
-import { login, register } from "../services";
+import { AuthRequests } from "../services/Authentication";
+const authRequests = new AuthRequests();
 
 enum PageStates {
   LOGIN = "Log in",
@@ -37,8 +38,8 @@ const Login = ({ setErrMsg, loginApp }: IProps) => {
     try {
       const authMsg =
         pageState === PageStates.LOGIN
-          ? await login(username, password)
-          : await register(username, password, verPass);
+          ? await authRequests.login(username, password)
+          : await authRequests.register(username, password, verPass);
       if (authMsg.token) loginApp(authMsg.token);
       if (authMsg.message) setErrMsg(authMsg.message);
       resetStates();

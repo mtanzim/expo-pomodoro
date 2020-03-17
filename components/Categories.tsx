@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Chip, IconButton, TextInput, HelperText } from "react-native-paper";
 import { ICategory, ICatProps } from "../interfaces";
-import { CategoriesRequests, ICatErr, ICatRes } from "../services";
+import { CategoriesRequests, ICatErr, ICatRes } from "../services/Categories";
 
 const Item = ({
   category,
