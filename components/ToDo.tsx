@@ -7,20 +7,26 @@ import {
   Menu,
   TextInput
 } from "react-native-paper";
+import { useCategories } from "../hooks/useCategories";
 import { ICategory, IToDoProps } from "../interfaces";
 
 const ToDo = ({
   curTasks,
-  categories,
+  // categories,
   addQtyToTask,
   remQtyFromTask,
   delTask,
   addTask
 }: IToDoProps) => {
+  const { categories } = useCategories();
   const [newTask, setNewTask] = useState("");
   const [catVisible, setCatVisible] = useState(false);
+  const blankCategory: ICategory = {
+    id: "-1",
+    name: "Please select a category"
+  };
   const [selectedCategory, setSelectedCategory] = useState<ICategory>(
-    categories[0]
+    blankCategory
   );
   const [qtyTasksToAdd, setQtyTasksToAdd] = useState(1);
 
@@ -30,6 +36,9 @@ const ToDo = ({
   };
 
   const addTaskAndClear = () => {
+    if (selectedCategory.id === "-1") {
+      return
+    }
     addTask(newTask, selectedCategory.name, qtyTasksToAdd);
     setNewTask("");
     setQtyTasksToAdd(1);

@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Chip, IconButton, TextInput, HelperText } from "react-native-paper";
 import { ICategory, ICatProps } from "../interfaces";
 import { CategoriesRequests } from "../services/Categories";
-
+import { useCategories } from "../hooks/useCategories";
 const Item = ({
   category,
   rem
@@ -25,43 +25,17 @@ const Categories = ({
   setSnackMsg
 }: ICatProps) => {
   const [newCat, setNewCat] = useState("");
-  const [categories, setCategories] = useState<ICategory[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await catServices.getCat();
-        console.log(res);
-        if (CategoriesRequests.isErr(res)) {
-          setSnackMsg(res.message);
-          return;
-        }
-        if (CategoriesRequests.isMultiple(res)) {
-          setCategories(res);
-          return;
-        }
-        throw new Error("Something went wrong!");
-      } catch (err) {
-        setCategories([]);
-        setSnackMsg(err?.message);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const addCategory = async () => {
-    const res = await catServices.addCat({ name: newCat });
-    if (CategoriesRequests.isErr(res)) {
-      setSnackMsg(res.message);
-      setNewCat("");
-    } else {
-      const { name } = res;
-      if (name) {
-        setCategories(curCat => curCat.concat(res));
-        setNewCat("");
-      }
-    }
+  const successCb = (msg: string) => {
+    setSnackMsg(msg);
+    setNewCat("");
   };
+  const errorCb = (msg: string) => {
+    setSnackMsg(msg);
+    setNewCat("");
+  };
+
+  const { categories, addCategory } = useCategories(successCb, errorCb);
 
   return (
     <View style={styles.container}>
@@ -72,7 +46,7 @@ const Categories = ({
           value={newCat}
           onChangeText={setNewCat}
         />
-        <IconButton icon="plus" onPress={addCategory as any} />
+        <IconButton icon="plus" onPress={() => addCategory(newCat) as any} />
       </View>
       <View style={styles.catContainer}>
         {categories.map(item => (
