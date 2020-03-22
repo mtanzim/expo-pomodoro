@@ -68,7 +68,7 @@ const App = () => {
   // come to todo on login
   useEffect(() => setPage(TABS.TODO), [token]);
 
-  const addTask = (newTask: string, category: string, qty: number) => {
+  const addTask = (newTask: string, qty: number, category?: string) => {
     if (newTask === "") {
       setSnackMsg("Task cannot be empty!");
       return;

@@ -1,6 +1,6 @@
 export interface IToDo {
   id: string;
-  category: string;
+  category?: string;
   title: string;
   remaining: number;
 }
@@ -21,7 +21,7 @@ export interface IToDoProps {
   addQtyToTask: (id: string) => void;
   remQtyFromTask: (id: string) => void;
   delTask: (id: string) => void;
-  addTask: (newTask: string, category: string, qty: number) => void;
+  addTask: (newTask: string, qty: number, category?: string) => void;
   setSnackMsg: (msg: string) => void;
 }
 
@@ -32,7 +32,7 @@ export enum ClockTypes {
 
 export interface IClockProps {
   title: string;
-  category: string;
+  category?: string;
   clockType?: ClockTypes;
   defaultTime?: number;
 }

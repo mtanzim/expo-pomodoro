@@ -33,7 +33,7 @@ const ToDo = ({
   };
 
   const addTaskAndClear = () => {
-    selectedCategory && addTask(newTask, selectedCategory.name, qtyTasksToAdd);
+    addTask(newTask, qtyTasksToAdd, selectedCategory?.name);
     setNewTask("");
     setQtyTasksToAdd(1);
   };
@@ -72,12 +72,15 @@ const ToDo = ({
                     icon="chevron-down"
                     onPress={() => setCatVisible(true)}
                   >
-                    {selectedCategory && selectedCategory.name}
+                    {selectedCategory
+                      ? selectedCategory.name
+                      : "Please select a category"}
                   </Chip>
                 }
               >
                 {categories.map(item => (
                   <Menu.Item
+                    key={item.id}
                     onPress={() => pickCat(item.id)}
                     title={item.name}
                   />
@@ -104,7 +107,7 @@ const ToDo = ({
             </DataTable.Cell>
           </DataTable.Row>
           {curTasks.map(task => (
-            <DataTable.Row>
+            <DataTable.Row key={task.id}>
               <DataTable.Cell>{task.title}</DataTable.Cell>
               <DataTable.Cell>{task.category}</DataTable.Cell>
               <DataTable.Cell numeric>{task.remaining}</DataTable.Cell>

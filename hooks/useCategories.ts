@@ -40,6 +40,15 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
       }
     }
   };
+  const remCategory = async (id: string) => {
+    const res = await catServices.remCat(id);
+    if (res && CategoriesRequests.isErr(res)) {
+      onFailure && onFailure(res.message);
+    } else {
+      setCategories(curCat => curCat.filter(cat => cat.id !== id));
+      onSuccess && onSuccess("Removed Category");
+    }
+  };
 
-  return { categories, addCategory };
+  return { categories, addCategory, remCategory };
 };

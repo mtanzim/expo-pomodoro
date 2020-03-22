@@ -25,13 +25,11 @@ const Login = ({ setErrMsg, loginApp }: IProps) => {
   const [password, setPass] = useState("");
   const [verPass, serVerPass] = useState("");
   const [pageState, setPageState] = useState(PageStates.LOGIN);
-  // const [errMsg, setErrMsg] = useState<null | string>(null);
 
   const resetStates = () => {
     setUsername("");
     setPass("");
     serVerPass("");
-    // setErrMsg(null);
   };
 
   const handleSubmit = async () => {

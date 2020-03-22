@@ -50,7 +50,6 @@ export class AuthRequests {
         })
       });
       let responseJson = await response.json();
-      console.log(responseJson);
       if (responseJson.username)
         return { message: `${responseJson.username} registered!` };
       return { message: "Failed to register" };

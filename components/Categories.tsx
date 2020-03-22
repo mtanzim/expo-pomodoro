@@ -15,21 +15,15 @@ const Item = ({
   </Chip>
 );
 
-const Categories = ({
-  // categories,
-  // addCategory,
-  remCategory,
-  setSnackMsg
-}: ICatProps) => {
+const Categories = ({ setSnackMsg }: ICatProps) => {
   const [newCat, setNewCat] = useState("");
 
-  const successCb = (msg: string) => {
+  const cb = (msg: string) => {
     setSnackMsg(msg);
     setNewCat("");
   };
-  const errorCb = successCb;
 
-  const { categories, addCategory } = useCategories(successCb, errorCb);
+  const { categories, addCategory, remCategory } = useCategories(cb, cb);
 
   return (
     <View style={styles.container}>
@@ -44,7 +38,11 @@ const Categories = ({
       </View>
       <View style={styles.catContainer}>
         {categories.map(item => (
-          <Item category={item} rem={remCategory} key={item.id} />
+          <Item
+            category={item}
+            rem={() => remCategory(item.id)}
+            key={item.id}
+          />
         ))}
       </View>
     </View>
