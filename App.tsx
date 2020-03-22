@@ -147,6 +147,7 @@ const App = () => {
               remQtyFromTask={remQtyFromTask}
               delTask={delTask}
               categories={cats}
+              setSnackMsg={setSnackMsg}
             />
           )}
           {curPage === TABS.CATEGORIES && (

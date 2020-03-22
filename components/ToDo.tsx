@@ -12,22 +12,19 @@ import { ICategory, IToDoProps } from "../interfaces";
 
 const ToDo = ({
   curTasks,
-  // categories,
   addQtyToTask,
   remQtyFromTask,
   delTask,
-  addTask
+  addTask,
+  setSnackMsg
 }: IToDoProps) => {
-  const { categories } = useCategories();
+  const { categories } = useCategories(setSnackMsg, setSnackMsg);
   const [newTask, setNewTask] = useState("");
   const [catVisible, setCatVisible] = useState(false);
-  const blankCategory: ICategory = {
-    id: "-1",
-    name: "Please select a category"
-  };
-  const [selectedCategory, setSelectedCategory] = useState<ICategory>(
-    blankCategory
+  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
+    null
   );
+
   const [qtyTasksToAdd, setQtyTasksToAdd] = useState(1);
 
   const pickCat = (id: string) => {
@@ -36,10 +33,7 @@ const ToDo = ({
   };
 
   const addTaskAndClear = () => {
-    if (selectedCategory.id === "-1") {
-      return
-    }
-    addTask(newTask, selectedCategory.name, qtyTasksToAdd);
+    selectedCategory && addTask(newTask, selectedCategory.name, qtyTasksToAdd);
     setNewTask("");
     setQtyTasksToAdd(1);
   };
@@ -78,7 +72,7 @@ const ToDo = ({
                     icon="chevron-down"
                     onPress={() => setCatVisible(true)}
                   >
-                    {selectedCategory.name}
+                    {selectedCategory && selectedCategory.name}
                   </Chip>
                 }
               >

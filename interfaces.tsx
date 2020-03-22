@@ -22,6 +22,7 @@ export interface IToDoProps {
   remQtyFromTask: (id: string) => void;
   delTask: (id: string) => void;
   addTask: (newTask: string, category: string, qty: number) => void;
+  setSnackMsg: (msg: string) => void;
 }
 
 export enum ClockTypes {

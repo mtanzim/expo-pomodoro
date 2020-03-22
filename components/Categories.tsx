@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Chip, IconButton, TextInput, HelperText } from "react-native-paper";
 import { ICategory, ICatProps } from "../interfaces";
-import { CategoriesRequests } from "../services/Categories";
 import { useCategories } from "../hooks/useCategories";
 const Item = ({
   category,
@@ -16,8 +15,6 @@ const Item = ({
   </Chip>
 );
 
-const catServices = new CategoriesRequests();
-
 const Categories = ({
   // categories,
   // addCategory,
@@ -30,10 +27,7 @@ const Categories = ({
     setSnackMsg(msg);
     setNewCat("");
   };
-  const errorCb = (msg: string) => {
-    setSnackMsg(msg);
-    setNewCat("");
-  };
+  const errorCb = successCb;
 
   const { categories, addCategory } = useCategories(successCb, errorCb);
 
