@@ -21,7 +21,7 @@ enum ClockState {
 const Clock = ({
   title,
   category,
-  defaultTime = 25 * 60,
+  defaultTime = 3,
   clockType = ClockTypes.WORK
 }: IClockProps) => {
   const [timeLeft, setTimeLeft] = useState(defaultTime);
@@ -58,9 +58,13 @@ const Clock = ({
   const registerDone = async () => {
     setTimeLeft(0);
     setClockState(ClockState.DONE);
-    await completeTask(title, defaultTime, category?.id);
-    // send data to backend/db etc here
   };
+
+  useEffect(() => {
+    if (clockState === ClockState.DONE) {
+      completeTask(title, defaultTime, category?.id);
+    }
+  }, [clockState]);
 
   const displayTime = (secondsIn: number): string => {
     const seconds: number = secondsIn % 60;
@@ -122,7 +126,7 @@ const Clock = ({
     <Surface style={styles.container}>
       <View style={styles.timerContainer}>
         <Title>{title}</Title>
-        <Subheading>{category}</Subheading>
+        <Subheading>{category?.name}</Subheading>
         <Text>{displayTime(timeLeft)}</Text>
         <ProgressBar progress={0.8} color={Colors.blue800} />
       </View>

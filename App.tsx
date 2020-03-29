@@ -23,19 +23,11 @@ const exampleCats: ICategory[] = [
 const exampleTasks: IToDo[] = [
   {
     id: uuid.v4(),
-    category: {
-      id: "1",
-      name: "day-job"
-    },
     name: "trading-hub",
     remaining: 4
   },
   {
     id: uuid.v4(),
-    category: {
-      id: "1",
-      name: "day-job"
-    },
     name: "trading-platform",
     remaining: 6
   }
@@ -135,10 +127,7 @@ const App = () => {
             />
             <Appbar.Action icon="logout" onPress={logoutApp} />
           </Appbar>
-          <Clock
-            title={curTasks[0].name}
-            category={curTasks[0]?.category}
-          />
+          <Clock title={curTasks[0].name} category={curTasks[0]?.category} />
           {curPage === TABS.TODO && (
             <ToDo
               curTasks={curTasks}

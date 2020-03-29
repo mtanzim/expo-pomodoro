@@ -36,7 +36,7 @@ export const useTasks = (onSuccess?: Callback, onFailure?: Callback) => {
       const { name: title } = res;
       if (title) {
         setTasks(curCat => curCat.concat(res));
-        onSuccess && onSuccess("Added Category");
+        onSuccess && onSuccess("Completed task");
       }
     } catch (err) {
       onFailure && onFailure(err?.message);
@@ -46,7 +46,7 @@ export const useTasks = (onSuccess?: Callback, onFailure?: Callback) => {
     try {
       await taskServices.rem(id);
       setTasks((curCat: IToDo[]) => curCat.filter(cat => cat.id !== id));
-      onSuccess && onSuccess("Removed Category");
+      onSuccess && onSuccess("Removed task");
     } catch (err) {
       onFailure && onFailure(err?.message);
     }

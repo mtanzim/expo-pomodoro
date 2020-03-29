@@ -118,7 +118,7 @@ const ToDo = ({
           {curTasks.map(task => (
             <DataTable.Row key={task.id}>
               <DataTable.Cell>{task.name}</DataTable.Cell>
-              <DataTable.Cell>{task.category}</DataTable.Cell>
+              <DataTable.Cell>{task.category?.name}</DataTable.Cell>
               <DataTable.Cell numeric>{task.remaining}</DataTable.Cell>
               <DataTable.Cell>
                 <IconButton icon="plus" onPress={() => addQtyToTask(task.id)} />
