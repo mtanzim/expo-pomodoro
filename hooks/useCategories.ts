@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { ICategory } from "../interfaces";
 import { CategoriesRequests } from "../services/Categories";
-import { LOCALSTORAGE_KEY_NAME } from "../constants";
 const catServices = new CategoriesRequests();
 
 type Callback = (msg: string) => void;
@@ -13,10 +12,9 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
     setLoading(true);
     const fetchData = async () => {
       try {
-        const [res, _] = await catServices.getCat();
+        const [res, _] = await catServices.get();
         setCategories(res);
       } catch (err) {
-        console.log(err);
         setCategories([]);
         onFailure && onFailure(err?.message);
       }
@@ -26,7 +24,7 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
   }, []);
   const addCategory = async (newCat: string) => {
     try {
-      const [res, _] = await catServices.addCat({ name: newCat });
+      const [res, _] = await catServices.add({ name: newCat });
       const { name } = res;
       if (name) {
         setCategories(curCat => curCat.concat(res));
@@ -38,7 +36,7 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
   };
   const remCategory = async (id: string) => {
     try {
-      await catServices.remCat(id);
+      await catServices.rem(id);
       setCategories((curCat: ICategory[]) =>
         curCat.filter(cat => cat.id !== id)
       );

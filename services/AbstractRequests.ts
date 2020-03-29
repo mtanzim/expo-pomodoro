@@ -1,18 +1,22 @@
-import { ICategory } from "../interfaces";
 import { BASE_URL, getToken, ErrorOnApiFail } from "./index";
 
-export interface ICatPost {
+export interface IToDoPost {
   name: string;
+  duration: number;
+  categoryId: number;
 }
 
-export interface ICatErr {
-  message: string;
-}
+export class AbstractRequests<TGet, TPost> {
+  private endpoint: string;
+  private name: string;
+  constructor(endpoint: string, name: string) {
+    this.endpoint = endpoint;
+    this.name = name;
+  }
 
-export class CategoriesRequests {
-  @ErrorOnApiFail("Failed to fetch categories")
-  async get(): Promise<[ICategory[], Response]> {
-    const res = await fetch(`${BASE_URL}/api/cat/`, {
+  @ErrorOnApiFail(`Failed to fetch ${name}`)
+  async get(): Promise<[TGet[], Response]> {
+    const res = await fetch(`${BASE_URL}/api/${this.endpoint}/`, {
       method: "GET",
       headers: {
         Authorization: getToken(),
@@ -22,9 +26,9 @@ export class CategoriesRequests {
     return [await res.json(), res];
   }
 
-  @ErrorOnApiFail("Failed to add categories")
-  async add(payload: ICatPost): Promise<[ICategory, Response]> {
-    const res = await fetch(`${BASE_URL}/api/cat/`, {
+  @ErrorOnApiFail(`Failed to add ${name}`)
+  async add(payload: TPost): Promise<[TGet, Response]> {
+    const res = await fetch(`${BASE_URL}/api/${this.endpoint}/`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -35,9 +39,9 @@ export class CategoriesRequests {
     });
     return [await res.json(), res];
   }
-  @ErrorOnApiFail("Failed to remove categories")
+  @ErrorOnApiFail(`Failed to remove ${name}`)
   async rem(id: string): Promise<[null, Response]> {
-    const res = await fetch(`${BASE_URL}/api/cat/${id}`, {
+    const res = await fetch(`${BASE_URL}/api/${this.endpoint}/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: getToken(),
