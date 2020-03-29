@@ -15,18 +15,6 @@ export interface IToDoAction {
   payload: IToDo;
 }
 
-export enum ClockTypes {
-  WORK = "Working",
-  BREAK = "On Break"
-}
-
-export interface IClockProps {
-  title: string;
-  category?: ICategory;
-  clockType?: ClockTypes;
-  defaultTime?: number;
-}
-
 export interface IListItemProps {
   toDo: IToDo;
   addOne: (id: string) => void;

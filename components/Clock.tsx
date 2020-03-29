@@ -9,8 +9,20 @@ import {
   Text,
   Title
 } from "react-native-paper";
-import { ClockTypes, IClockProps } from "../interfaces";
+import { ICategory } from "../interfaces";
 import { useTasks } from "../hooks/useTasks";
+
+interface ClockProps {
+  title: string;
+  category?: ICategory;
+  defaultTime?: number;
+  defaultBreakTime?: number;
+}
+
+enum ClockTypes {
+  WORK = "Working",
+  BREAK = "On Break"
+}
 enum ClockState {
   INIT,
   RUNNING,
@@ -21,21 +33,26 @@ enum ClockState {
 const Clock = ({
   title,
   category,
-  defaultTime = 3,
-  clockType = ClockTypes.WORK
-}: IClockProps) => {
+  defaultTime = 10,
+  // defaultBreakTime = 5
+}: ClockProps) => {
+  const [curType, setCurType] = useState(ClockTypes.WORK);
+  const [clockState, setClockState] = useState(ClockState.INIT);
   const [timeLeft, setTimeLeft] = useState(defaultTime);
   const [overallTimeLeft, setOverallTimeLeft] = useState(defaultTime);
   const [startTime, setStartTime] = useState(Date.now());
-  const [clockState, setClockState] = useState(ClockState.INIT);
   const EPSILON = 0.0001;
-  const { isLoading, tasks, addTask: completeTask } = useTasks();
+  const { addTask: completeTask } = useTasks();
 
   const reset = () => {
     setStartTime(Date.now());
-    setTimeLeft(defaultTime);
-    setOverallTimeLeft(defaultTime);
-    setClockState(ClockState.INIT);
+    if (curType === ClockTypes.WORK) {
+      setTimeLeft(defaultTime);
+      setOverallTimeLeft(defaultTime);
+      return;
+    }
+    // setTimeLeft(defaultBreakTime);
+    // setOverallTimeLeft(defaultBreakTime);
   };
 
   const pause = () => {
@@ -45,6 +62,7 @@ const Clock = ({
 
   const stop = () => {
     reset();
+    setClockState(ClockState.INIT);
   };
   const start = () => {
     reset();
@@ -55,24 +73,20 @@ const Clock = ({
     setStartTime(Date.now());
   };
 
-  const registerDone = async () => {
-    setTimeLeft(0);
+  const registerDone = () => {
     setClockState(ClockState.DONE);
   };
 
   useEffect(() => {
     if (clockState === ClockState.DONE) {
-      completeTask(title, defaultTime, category?.id);
+      curType === ClockTypes.WORK &&
+        completeTask(title, defaultTime, category?.id);
+      // setCurType(
+      //   curType === ClockTypes.WORK ? ClockTypes.BREAK : ClockTypes.WORK
+      // );
+      start();
     }
   }, [clockState]);
-
-  const displayTime = (secondsIn: number): string => {
-    const seconds: number = secondsIn % 60;
-    const minutes: number = Math.floor(secondsIn / 60);
-    const minStr: string = minutes < 10 ? `0${minutes}` : minutes.toString();
-    const secStr: string = seconds < 10 ? `0${seconds}` : seconds.toString();
-    return `${minStr}:${secStr}`;
-  };
 
   useEffect(() => {
     const timer = setTimeout(
@@ -83,12 +97,23 @@ const Clock = ({
         ),
       1000
     );
+    if (clockState === ClockState.DONE) {
+      return () => clearTimeout(timer);
+    }
     if (timeLeft <= 0 + EPSILON) {
       clearTimeout(timer);
       setClockState(ClockState.DONE);
     }
     return () => clearTimeout(timer);
   }, [timeLeft, clockState]);
+
+  const displayTime = (secondsIn: number): string => {
+    const seconds: number = secondsIn % 60;
+    const minutes: number = Math.floor(secondsIn / 60);
+    const minStr: string = minutes < 10 ? `0${minutes}` : minutes.toString();
+    const secStr: string = seconds < 10 ? `0${seconds}` : seconds.toString();
+    return `${minStr}:${secStr}`;
+  };
 
   const renderButtons = () => {
     switch (clockState) {
@@ -127,6 +152,7 @@ const Clock = ({
       <View style={styles.timerContainer}>
         <Title>{title}</Title>
         <Subheading>{category?.name}</Subheading>
+        <Subheading>{curType}</Subheading>
         <Text>{displayTime(timeLeft)}</Text>
         <ProgressBar progress={0.8} color={Colors.blue800} />
       </View>
