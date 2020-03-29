@@ -1,7 +1,7 @@
 export interface IToDo {
   id: string;
   category?: string;
-  title: string;
+  name: string;
   remaining: number;
 }
 

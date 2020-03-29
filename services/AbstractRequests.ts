@@ -14,7 +14,7 @@ export class AbstractRequests<TGet, TPost> {
     this.name = name;
   }
 
-  @ErrorOnApiFail(`Failed to fetch ${name}`)
+  @ErrorOnApiFail
   async get(): Promise<[TGet[], Response]> {
     const res = await fetch(`${BASE_URL}/api/${this.endpoint}/`, {
       method: "GET",
@@ -26,7 +26,7 @@ export class AbstractRequests<TGet, TPost> {
     return [await res.json(), res];
   }
 
-  @ErrorOnApiFail(`Failed to add ${name}`)
+  @ErrorOnApiFail
   async add(payload: TPost): Promise<[TGet, Response]> {
     const res = await fetch(`${BASE_URL}/api/${this.endpoint}/`, {
       method: "POST",
@@ -39,7 +39,7 @@ export class AbstractRequests<TGet, TPost> {
     });
     return [await res.json(), res];
   }
-  @ErrorOnApiFail(`Failed to remove ${name}`)
+  @ErrorOnApiFail
   async rem(id: string): Promise<[null, Response]> {
     const res = await fetch(`${BASE_URL}/api/${this.endpoint}/${id}`, {
       method: "DELETE",

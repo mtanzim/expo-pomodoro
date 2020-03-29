@@ -24,13 +24,13 @@ const exampleTasks: IToDo[] = [
   {
     id: uuid.v4(),
     category: "day-job",
-    title: "trading-hub",
+    name: "trading-hub",
     remaining: 4
   },
   {
     id: uuid.v4(),
     category: "day-job",
-    title: "trading-platform",
+    name: "trading-platform",
     remaining: 6
   }
 ];
@@ -83,7 +83,7 @@ const App = () => {
       type: ADD_TODO,
       payload: {
         id: uuid.v4(),
-        title: newTask,
+        name: newTask,
         category,
         remaining: qty
       }

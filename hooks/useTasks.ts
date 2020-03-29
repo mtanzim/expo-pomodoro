@@ -22,19 +22,23 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
     };
     fetchData();
   }, []);
-//   const addCategory = async (newCat: string) => {
-//     try {
-//       const [res, _] = await taskServices.add({ name: newCat });
-//       const { name } = res;
-//       if (name) {
-//         setTasks(curCat => curCat.concat(res));
-//         onSuccess && onSuccess("Added Category");
-//       }
-//     } catch (err) {
-//       onFailure && onFailure(err?.message);
-//     }
-//   };
-  const remCategory = async (id: string) => {
+  const addTask = async (newCat: string, catId: number, dur: number) => {
+    try {
+      const [res, _] = await taskServices.add({
+        name: newCat,
+        categoryId: catId,
+        duration: dur
+      });
+      const { name } = res;
+      if (name) {
+        setTasks(curCat => curCat.concat(res));
+        onSuccess && onSuccess("Added Category");
+      }
+    } catch (err) {
+      onFailure && onFailure(err?.message);
+    }
+  };
+  const remTask = async (id: string) => {
     try {
       await taskServices.rem(id);
       setTasks((curCat: IToDo[]) => curCat.filter(cat => cat.id !== id));
@@ -44,5 +48,5 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
     }
   };
 
-  return { isLoading, categories, addCategory, remCategory };
+  return { isLoading, tasks, addTask, remTask };
 };
