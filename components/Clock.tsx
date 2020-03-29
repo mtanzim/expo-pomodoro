@@ -30,13 +30,7 @@ enum ClockState {
   DONE
 }
 
-const Clock = ({
-  title,
-  category,
-  defaultTime = 10,
-  // defaultBreakTime = 5
-}: ClockProps) => {
-  const [curType, setCurType] = useState(ClockTypes.WORK);
+const Clock = ({ title, category, defaultTime = 10 }: ClockProps) => {
   const [clockState, setClockState] = useState(ClockState.INIT);
   const [timeLeft, setTimeLeft] = useState(defaultTime);
   const [overallTimeLeft, setOverallTimeLeft] = useState(defaultTime);
@@ -46,13 +40,8 @@ const Clock = ({
 
   const reset = () => {
     setStartTime(Date.now());
-    if (curType === ClockTypes.WORK) {
-      setTimeLeft(defaultTime);
-      setOverallTimeLeft(defaultTime);
-      return;
-    }
-    // setTimeLeft(defaultBreakTime);
-    // setOverallTimeLeft(defaultBreakTime);
+    setTimeLeft(defaultTime);
+    setOverallTimeLeft(defaultTime);
   };
 
   const pause = () => {
@@ -79,11 +68,7 @@ const Clock = ({
 
   useEffect(() => {
     if (clockState === ClockState.DONE) {
-      curType === ClockTypes.WORK &&
-        completeTask(title, defaultTime, category?.id);
-      // setCurType(
-      //   curType === ClockTypes.WORK ? ClockTypes.BREAK : ClockTypes.WORK
-      // );
+      completeTask(title, defaultTime, category?.id);
       start();
     }
   }, [clockState]);
@@ -152,7 +137,6 @@ const Clock = ({
       <View style={styles.timerContainer}>
         <Title>{title}</Title>
         <Subheading>{category?.name}</Subheading>
-        <Subheading>{curType}</Subheading>
         <Text>{displayTime(timeLeft)}</Text>
         <ProgressBar progress={0.8} color={Colors.blue800} />
       </View>
