@@ -1,5 +1,5 @@
-import { BASE_URL, getToken } from "./index";
 import { ICategory } from "../interfaces";
+import { BASE_URL, getToken, ErrorOnApiFail } from "./index";
 
 export interface ICatPost {
   name: string;
@@ -10,69 +10,40 @@ export interface ICatErr {
 }
 
 export class CategoriesRequests {
-  static isErr(payload: ICatErr | ICategory | ICategory[]): payload is ICatErr {
-    return (payload as ICatErr).message !== undefined;
-  }
-  static isMultiple(payload: ICategory | ICategory[]): payload is ICategory[] {
-    return (
-      (payload as ICategory[]).length !== undefined && Array.isArray(payload)
-    );
-  }
-
-  async getCat(): Promise<ICategory[] | ICatErr> {
-    try {
-      const response = await fetch(`${BASE_URL}/api/cat/`, {
-        method: "GET",
-        headers: {
-          Authorization: getToken(),
-          "Content-Type": "application/json"
-        }
-      });
-      const responseJson = await response.json();
-      return responseJson;
-    } catch (error) {
-      return {
-        message: error
-      };
-    }
-  }
-
-  async addCat(payload: ICatPost): Promise<ICategory | ICatErr> {
-    try {
-      const response = await fetch(`${BASE_URL}/api/cat/`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: getToken(),
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-      const responseJson = await response.json();
-      return responseJson;
-    } catch (error) {
-      return {
-        message: error
-      };
-    }
-  }
-  async remCat(id: string): Promise<undefined | ICatErr> {
-    try {
-      const res = await fetch(`${BASE_URL}/api/cat/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: getToken(),
-          "Content-Type": "application/json"
-        }
-      });
-      if (res.status === 200) {
-        return;
+  @ErrorOnApiFail("Failed to fetch categories")
+  async getCat(): Promise<[ICategory[], Response]> {
+    const res = await fetch(`${BASE_URL}/api/cat/`, {
+      method: "GET",
+      headers: {
+        Authorization: getToken(),
+        "Content-Type": "application/json"
       }
-      throw new Error("Something went wrong!");
-    } catch (error) {
-      return {
-        message: error
-      };
-    }
+    });
+    return [await res.json(), res];
+  }
+
+  @ErrorOnApiFail("Failed to add categories")
+  async addCat(payload: ICatPost): Promise<[ICategory, Response]> {
+    const res = await fetch(`${BASE_URL}/api/cat/`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: getToken(),
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+    return [await res.json(), res];
+  }
+  @ErrorOnApiFail("Failed to remove categories")
+  async remCat(id: string): Promise<[null, Response]> {
+    const res = await fetch(`${BASE_URL}/api/cat/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: getToken(),
+        "Content-Type": "application/json"
+      }
+    });
+    return [null, res];
   }
 }

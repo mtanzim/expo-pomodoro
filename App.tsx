@@ -13,8 +13,7 @@ import Login from "./components/Login";
 import ToDo from "./components/ToDo";
 import { ICategory, IToDo } from "./interfaces";
 import { taskReducer } from "./reducers";
-
-const LOCALSTORAGE_KEY_NAME = "pomodoro-app-token";
+import { LOCALSTORAGE_KEY_NAME } from "./constants";
 const UNCATEGORIZED = "Uncategorized";
 const exampleCats: ICategory[] = [
   { id: uuid.v4(), name: UNCATEGORIZED },
@@ -47,13 +46,17 @@ const App = () => {
   const [token, setToken] = useState(
     localStorage.getItem(LOCALSTORAGE_KEY_NAME)
   );
+  const [isLoggedIn, setLoggedIn] = useState(false);
   const [curPage, setPage] = useState(TABS.TODO);
   const [snackMsg, setSnackMsg] = useState("");
 
-  const logoutApp = () => {
-    localStorage.removeItem(LOCALSTORAGE_KEY_NAME);
-    setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
-    setSnackMsg("Logged out");
+  const logoutApp = (msg?: string) => {
+    if (isLoggedIn) {
+      localStorage.removeItem(LOCALSTORAGE_KEY_NAME);
+      setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
+      setSnackMsg(msg || "Logged out");
+    }
+    setLoggedIn(false);
   };
   const loginApp = (token: string) => {
     localStorage.setItem(LOCALSTORAGE_KEY_NAME, token);
@@ -66,7 +69,18 @@ const App = () => {
   const [curTasks, taskDispatch] = useReducer(taskReducer, exampleTasks);
 
   // come to todo on login
-  useEffect(() => setPage(TABS.TODO), [token]);
+  useEffect(() => {
+    if (token) {
+      setPage(TABS.TODO);
+    }
+  }, [token]);
+  useEffect(() => {
+    const token = localStorage.getItem(LOCALSTORAGE_KEY_NAME);
+    if (!token && isLoggedIn) {
+      logoutApp("Authorization error");
+    }
+    // setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
+  });
 
   const addTask = (newTask: string, qty: number, category?: string) => {
     if (newTask === "") {
@@ -136,7 +150,10 @@ const App = () => {
               icon="shape"
               onPress={() => setPage(TABS.CATEGORIES)}
             />
-            <Appbar.Action icon="logout" onPress={logoutApp} />
+            <Appbar.Action
+              icon="logout"
+              onPress={() => logoutApp("Logged out")}
+            />
           </Appbar>
           <Clock title={curTasks[0].title} category={curTasks[0].category} />
           {curPage === TABS.TODO && (
