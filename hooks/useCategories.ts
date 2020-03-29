@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ICategory, ICatProps } from "../interfaces";
+import { ICategory } from "../interfaces";
 import { CategoriesRequests } from "../services/Categories";
 import { LOCALSTORAGE_KEY_NAME } from "../constants";
 const catServices = new CategoriesRequests();
@@ -8,7 +8,9 @@ type Callback = (msg: string) => void;
 
 export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
   const [categories, setCategories] = useState<ICategory[]>([]);
+  const [isLoading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       try {
         const [res, _] = await catServices.getCat();
@@ -18,6 +20,7 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
         setCategories([]);
         onFailure && onFailure(err?.message);
       }
+      setLoading(false);
     };
     fetchData();
   }, []);
@@ -45,5 +48,5 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
     }
   };
 
-  return { categories, addCategory, remCategory };
+  return { isLoading, categories, addCategory, remCategory };
 };

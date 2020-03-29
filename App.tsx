@@ -46,25 +46,18 @@ const App = () => {
   const [token, setToken] = useState(
     localStorage.getItem(LOCALSTORAGE_KEY_NAME)
   );
-  const [isLoggedIn, setLoggedIn] = useState(false);
   const [curPage, setPage] = useState(TABS.TODO);
   const [snackMsg, setSnackMsg] = useState("");
 
-  const logoutApp = (msg?: string) => {
-    if (isLoggedIn) {
-      localStorage.removeItem(LOCALSTORAGE_KEY_NAME);
-      setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
-      setSnackMsg(msg || "Logged out");
-    }
-    setLoggedIn(false);
+  const logoutApp = () => {
+    localStorage.removeItem(LOCALSTORAGE_KEY_NAME);
+    setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
   };
   const loginApp = (token: string) => {
     localStorage.setItem(LOCALSTORAGE_KEY_NAME, token);
     setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
     setSnackMsg("Welcome");
   };
-
-  const [cats, setCats] = useState(exampleCats);
 
   const [curTasks, taskDispatch] = useReducer(taskReducer, exampleTasks);
 
@@ -76,10 +69,9 @@ const App = () => {
   }, [token]);
   useEffect(() => {
     const token = localStorage.getItem(LOCALSTORAGE_KEY_NAME);
-    if (!token && isLoggedIn) {
-      logoutApp("Authorization error");
+    if (!token) {
+      logoutApp();
     }
-    // setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
   });
 
   const addTask = (newTask: string, qty: number, category?: string) => {
@@ -120,21 +112,6 @@ const App = () => {
     taskToUpdate && taskDispatch({ type: REM_TODO, payload: taskToUpdate });
   };
 
-  const addCat = (name: string) => {
-    if (name === "") {
-      setSnackMsg("Category cannot be empty!");
-      return;
-    }
-    setCats([{ id: uuid.v4(), name }, ...cats]);
-  };
-  const remCat = (id: string) => {
-    if (cats.length === 1) {
-      setSnackMsg("Cannot remove the final category!");
-      return;
-    }
-    setCats(cats.filter(item => item.id !== id));
-  };
-
   return (
     <View style={styles.container}>
       {!token ? (
@@ -150,10 +127,7 @@ const App = () => {
               icon="shape"
               onPress={() => setPage(TABS.CATEGORIES)}
             />
-            <Appbar.Action
-              icon="logout"
-              onPress={() => logoutApp("Logged out")}
-            />
+            <Appbar.Action icon="logout" onPress={logoutApp} />
           </Appbar>
           <Clock title={curTasks[0].title} category={curTasks[0].category} />
           {curPage === TABS.TODO && (
@@ -163,17 +137,11 @@ const App = () => {
               addTask={addTask}
               remQtyFromTask={remQtyFromTask}
               delTask={delTask}
-              categories={cats}
               setSnackMsg={setSnackMsg}
             />
           )}
           {curPage === TABS.CATEGORIES && (
-            <Categories
-              categories={cats}
-              addCategory={addCat}
-              remCategory={remCat}
-              setSnackMsg={setSnackMsg}
-            />
+            <Categories setSnackMsg={setSnackMsg} />
           )}
         </View>
       )}

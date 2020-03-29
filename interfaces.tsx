@@ -15,16 +15,6 @@ export interface IToDoAction {
   payload: IToDo;
 }
 
-export interface IToDoProps {
-  curTasks: IToDo[];
-  categories: ICategory[];
-  addQtyToTask: (id: string) => void;
-  remQtyFromTask: (id: string) => void;
-  delTask: (id: string) => void;
-  addTask: (newTask: string, qty: number, category?: string) => void;
-  setSnackMsg: (msg: string) => void;
-}
-
 export enum ClockTypes {
   WORK = "Working",
   BREAK = "On Break"
@@ -42,11 +32,4 @@ export interface IListItemProps {
   addOne: (id: string) => void;
   remOne: (id: string) => void;
   delTask: (id: string) => void;
-}
-
-export interface ICatProps {
-  categories: ICategory[];
-  addCategory: (name: string) => void;
-  remCategory: (id: string) => void;
-  setSnackMsg: (msg: string) => void;
 }

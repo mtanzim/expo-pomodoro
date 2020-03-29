@@ -14,7 +14,6 @@ export function ErrorOnApiFail(msg?: string) {
     descriptor.value = async function(payload?: any) {
       const boundOriginalFunction = originalFunction.bind(this);
       const [resJSON, result] = await boundOriginalFunction(payload);
-      console.log(result);
       if (!result.ok) {
         if (result?.status === 401) {
           localStorage.removeItem(LOCALSTORAGE_KEY_NAME);

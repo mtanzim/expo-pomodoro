@@ -8,7 +8,16 @@ import {
   TextInput
 } from "react-native-paper";
 import { useCategories } from "../hooks/useCategories";
-import { ICategory, IToDoProps } from "../interfaces";
+import { ICategory, IToDo } from "../interfaces";
+
+export interface ToDoProps {
+  curTasks: IToDo[];
+  addQtyToTask: (id: string) => void;
+  remQtyFromTask: (id: string) => void;
+  delTask: (id: string) => void;
+  addTask: (newTask: string, qty: number, category?: string) => void;
+  setSnackMsg: (msg: string) => void;
+}
 
 const ToDo = ({
   curTasks,
@@ -17,7 +26,7 @@ const ToDo = ({
   delTask,
   addTask,
   setSnackMsg
-}: IToDoProps) => {
+}: ToDoProps) => {
   const { categories } = useCategories(setSnackMsg, setSnackMsg);
   const [newTask, setNewTask] = useState("");
   const [catVisible, setCatVisible] = useState(false);

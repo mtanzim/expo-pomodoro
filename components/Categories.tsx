@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { Chip, IconButton, TextInput, HelperText } from "react-native-paper";
-import { ICategory, ICatProps } from "../interfaces";
+import { ICategory } from "../interfaces";
 import { useCategories } from "../hooks/useCategories";
 const Item = ({
   category,
@@ -15,7 +15,11 @@ const Item = ({
   </Chip>
 );
 
-const Categories = ({ setSnackMsg }: ICatProps) => {
+export interface CatProps {
+  setSnackMsg: (msg: string) => void;
+}
+
+const Categories = ({ setSnackMsg }: CatProps) => {
   const [newCat, setNewCat] = useState("");
 
   const cb = (msg: string) => {
@@ -23,7 +27,10 @@ const Categories = ({ setSnackMsg }: ICatProps) => {
     setNewCat("");
   };
 
-  const { categories, addCategory, remCategory } = useCategories(cb, cb);
+  const { isLoading, categories, addCategory, remCategory } = useCategories(
+    cb,
+    cb
+  );
 
   return (
     <View style={styles.container}>
@@ -37,13 +44,17 @@ const Categories = ({ setSnackMsg }: ICatProps) => {
         <IconButton icon="plus" onPress={() => addCategory(newCat) as any} />
       </View>
       <View style={styles.catContainer}>
-        {categories.map(item => (
-          <Item
-            category={item}
-            rem={() => remCategory(item.id)}
-            key={item.id}
-          />
-        ))}
+        {isLoading ? (
+          <Text> Loading</Text>
+        ) : (
+          categories.map(item => (
+            <Item
+              category={item}
+              rem={() => remCategory(item.id)}
+              key={item.id}
+            />
+          ))
+        )}
       </View>
     </View>
   );
