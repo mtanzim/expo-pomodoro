@@ -5,7 +5,7 @@ const taskServices = new TasksRequests();
 
 type Callback = (msg: string) => void;
 
-export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
+export const useTasks = (onSuccess?: Callback, onFailure?: Callback) => {
   const [tasks, setTasks] = useState<IToDo[]>([]);
   const [isLoading, setLoading] = useState(false);
   useEffect(() => {
@@ -22,15 +22,19 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
     };
     fetchData();
   }, []);
-  const addTask = async (newCat: string, catId: number, dur: number) => {
+  const addTask = async (
+    name: string,
+    duration: number,
+    categoryId?: string
+  ) => {
     try {
       const [res, _] = await taskServices.add({
-        name: newCat,
-        categoryId: catId,
-        duration: dur
+        name,
+        duration,
+        categoryId
       });
-      const { name } = res;
-      if (name) {
+      const { name: title } = res;
+      if (title) {
         setTasks(curCat => curCat.concat(res));
         onSuccess && onSuccess("Added Category");
       }

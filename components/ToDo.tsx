@@ -15,7 +15,7 @@ export interface ToDoProps {
   addQtyToTask: (id: string) => void;
   remQtyFromTask: (id: string) => void;
   delTask: (id: string) => void;
-  addTask: (newTask: string, qty: number, category?: string) => void;
+  addTask: (newTask: string, qty: number, category?: ICategory) => void;
   setSnackMsg: (msg: string) => void;
 }
 
@@ -30,9 +30,9 @@ const ToDo = ({
   const { categories } = useCategories(setSnackMsg, setSnackMsg);
   const [newTask, setNewTask] = useState("");
   const [catVisible, setCatVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
-    null
-  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    ICategory | undefined
+  >(undefined);
 
   const [qtyTasksToAdd, setQtyTasksToAdd] = useState(1);
 
@@ -42,7 +42,7 @@ const ToDo = ({
   };
 
   const addTaskAndClear = () => {
-    addTask(newTask, qtyTasksToAdd, selectedCategory?.name);
+    addTask(newTask, qtyTasksToAdd, selectedCategory);
     setNewTask("");
     setQtyTasksToAdd(1);
   };

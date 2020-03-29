@@ -10,6 +10,7 @@ import {
   Title
 } from "react-native-paper";
 import { ClockTypes, IClockProps } from "../interfaces";
+import { useTasks } from "../hooks/useTasks";
 enum ClockState {
   INIT,
   RUNNING,
@@ -28,6 +29,7 @@ const Clock = ({
   const [startTime, setStartTime] = useState(Date.now());
   const [clockState, setClockState] = useState(ClockState.INIT);
   const EPSILON = 0.0001;
+  const { isLoading, tasks, addTask: completeTask } = useTasks();
 
   const reset = () => {
     setStartTime(Date.now());
@@ -53,9 +55,10 @@ const Clock = ({
     setStartTime(Date.now());
   };
 
-  const registerDone = () => {
+  const registerDone = async () => {
     setTimeLeft(0);
     setClockState(ClockState.DONE);
+    await completeTask(title, defaultTime, category?.id);
     // send data to backend/db etc here
   };
 

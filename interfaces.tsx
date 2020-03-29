@@ -1,6 +1,6 @@
 export interface IToDo {
   id: string;
-  category?: string;
+  category?: ICategory;
   name: string;
   remaining: number;
 }
@@ -22,7 +22,7 @@ export enum ClockTypes {
 
 export interface IClockProps {
   title: string;
-  category?: string;
+  category?: ICategory;
   clockType?: ClockTypes;
   defaultTime?: number;
 }

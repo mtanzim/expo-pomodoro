@@ -5,7 +5,7 @@ import { AbstractRequests } from "./AbstractRequests";
 export interface IToDoPost {
   name: string;
   duration: number;
-  categoryId: number;
+  categoryId?: string;
 }
 
 export class TasksRequests extends AbstractRequests<IToDo, IToDoPost> {
