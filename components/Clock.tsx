@@ -7,41 +7,48 @@ import {
   Subheading,
   Surface,
   Text,
-  Title
+  Title,
 } from "react-native-paper";
 import { ICategory } from "../interfaces";
 import { useTasks } from "../hooks/useTasks";
 
+export enum ClockTypes {
+  WORK = "Working",
+  BREAK = "On Break",
+}
 interface ClockProps {
   title: string;
+  handleSessionDone: () => void;
+  duration: number;
+  clockType: ClockTypes;
   category?: ICategory;
-  defaultTime?: number;
-  defaultBreakTime?: number;
 }
 
-enum ClockTypes {
-  WORK = "Working",
-  BREAK = "On Break"
-}
 enum ClockState {
   INIT,
   RUNNING,
   PAUSED,
-  DONE
+  DONE,
 }
 
-const Clock = ({ title, category, defaultTime = 10 }: ClockProps) => {
+const Clock = ({
+  title,
+  category,
+  handleSessionDone,
+  duration,
+  clockType,
+}: ClockProps) => {
   const [clockState, setClockState] = useState(ClockState.INIT);
-  const [timeLeft, setTimeLeft] = useState(defaultTime);
-  const [overallTimeLeft, setOverallTimeLeft] = useState(defaultTime);
+  const [timeLeft, setTimeLeft] = useState(duration);
+  const [overallTimeLeft, setOverallTimeLeft] = useState(duration);
   const [startTime, setStartTime] = useState(Date.now());
   const EPSILON = 0.0001;
   const { addTask: completeTask } = useTasks();
 
   const reset = () => {
     setStartTime(Date.now());
-    setTimeLeft(defaultTime);
-    setOverallTimeLeft(defaultTime);
+    setTimeLeft(duration);
+    setOverallTimeLeft(duration);
   };
 
   const pause = () => {
@@ -68,10 +75,18 @@ const Clock = ({ title, category, defaultTime = 10 }: ClockProps) => {
 
   useEffect(() => {
     if (clockState === ClockState.DONE) {
-      completeTask(title, defaultTime, category?.id);
-      start();
+      // register task on the backend
+      if (clockType === ClockTypes.WORK) {
+        completeTask(title, duration, category?.id);
+      }
+      handleSessionDone();
     }
   }, [clockState]);
+  useEffect(() => {
+    if (clockState === ClockState.DONE) {
+      start();
+    }
+  }, [clockType]);
 
   useEffect(() => {
     const timer = setTimeout(
@@ -135,7 +150,9 @@ const Clock = ({ title, category, defaultTime = 10 }: ClockProps) => {
   return (
     <Surface style={styles.container}>
       <View style={styles.timerContainer}>
-        <Title>{title}</Title>
+        <Title>
+          {clockType === ClockTypes.WORK ? title : ClockTypes.BREAK}
+        </Title>
         <Subheading>{category?.name}</Subheading>
         <Text>{displayTime(timeLeft)}</Text>
         <ProgressBar progress={0.8} color={Colors.blue800} />
@@ -156,21 +173,21 @@ const styles = StyleSheet.create({
     width: "50%",
     minHeight: 200,
     maxHeight: 200,
-    padding: 8
+    padding: 8,
     // borderColor: 'green',
     // borderWidth: 2,
   },
   timerContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
 
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between"
-  }
+    justifyContent: "space-between",
+  },
 });
 export default Clock;

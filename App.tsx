@@ -1,44 +1,46 @@
-import React, { useReducer, useState, useEffect } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   Appbar,
   Provider as PaperProvider,
-  Snackbar
+  Snackbar,
 } from "react-native-paper";
 import uuid from "uuid";
 import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "./actionTypes";
 import Categories from "./components/Categories";
-import Clock from "./components/Clock";
+import Clock, { ClockTypes } from "./components/Clock";
 import Login from "./components/Login";
 import ToDo from "./components/ToDo";
+import { LOCALSTORAGE_KEY_NAME } from "./constants";
 import { ICategory, IToDo } from "./interfaces";
 import { taskReducer } from "./reducers";
-import { LOCALSTORAGE_KEY_NAME } from "./constants";
+
 const UNCATEGORIZED = "Uncategorized";
-const exampleCats: ICategory[] = [
-  { id: uuid.v4(), name: UNCATEGORIZED },
-  { id: uuid.v4(), name: "Work" },
-  { id: uuid.v4(), name: "Home" }
-];
+
 const exampleTasks: IToDo[] = [
   {
     id: uuid.v4(),
     name: "trading-hub",
-    remaining: 4
+    remaining: 4,
   },
   {
     id: uuid.v4(),
     name: "trading-platform",
-    remaining: 6
-  }
+    remaining: 6,
+  },
 ];
 
 enum TABS {
   TODO,
   CATEGORIES,
   STATS,
-  PROFILE
+  PROFILE,
 }
+
+const ClockDurations = new Map<ClockTypes, number>([
+  [ClockTypes.WORK, 25],
+  [ClockTypes.BREAK, 5],
+]);
 
 const App = () => {
   const [token, setToken] = useState(
@@ -46,6 +48,13 @@ const App = () => {
   );
   const [curPage, setPage] = useState(TABS.TODO);
   const [snackMsg, setSnackMsg] = useState("");
+  const [clockType, setClockType] = useState(ClockTypes.WORK);
+
+  const toggleClockType = () => {
+    setClockType((curClockType) =>
+      curClockType === ClockTypes.WORK ? ClockTypes.BREAK : ClockTypes.WORK
+    );
+  };
 
   const logoutApp = () => {
     localStorage.removeItem(LOCALSTORAGE_KEY_NAME);
@@ -55,6 +64,12 @@ const App = () => {
     localStorage.setItem(LOCALSTORAGE_KEY_NAME, token);
     setToken(localStorage.getItem(LOCALSTORAGE_KEY_NAME));
     setSnackMsg("Welcome");
+  };
+
+  const onSessionDone = () => {
+    setSnackMsg(`${curTasks[0].name} Completed!`);
+    remQtyFromTask(curTasks[0].id);
+    toggleClockType();
   };
 
   const [curTasks, taskDispatch] = useReducer(taskReducer, exampleTasks);
@@ -83,16 +98,16 @@ const App = () => {
         id: uuid.v4(),
         name: newTask,
         category,
-        remaining: qty
-      }
+        remaining: qty,
+      },
     });
   };
   const addQtyToTask = (id: string) => {
-    const taskToUpdate = curTasks.find(item => item.id === id);
+    const taskToUpdate = curTasks.find((item) => item.id === id);
     taskToUpdate && taskDispatch({ type: INCR_ONE, payload: taskToUpdate });
   };
   const remQtyFromTask = (id: string) => {
-    const taskToUpdate = curTasks.find(item => item.id === id);
+    const taskToUpdate = curTasks.find((item) => item.id === id);
     if (taskToUpdate) {
       if (taskToUpdate.remaining === 1) {
         delTask(id);
@@ -106,7 +121,7 @@ const App = () => {
       setSnackMsg("Cannot remove the final task!");
       return;
     }
-    const taskToUpdate = curTasks.find(item => item.id === id);
+    const taskToUpdate = curTasks.find((item) => item.id === id);
     taskToUpdate && taskDispatch({ type: REM_TODO, payload: taskToUpdate });
   };
 
@@ -127,7 +142,13 @@ const App = () => {
             />
             <Appbar.Action icon="logout" onPress={logoutApp} />
           </Appbar>
-          <Clock title={curTasks[0].name} category={curTasks[0]?.category} />
+          <Clock
+            handleSessionDone={onSessionDone}
+            clockType={clockType}
+            duration={ClockDurations.get(clockType) || 25}
+            title={curTasks[0].name}
+            category={curTasks[0]?.category}
+          />
           {curPage === TABS.TODO && (
             <ToDo
               curTasks={curTasks}
@@ -156,17 +177,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "stretch",
     justifyContent: "flex-start",
-    alignContent: "flex-start"
+    alignContent: "flex-start",
   },
   nav: {
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   navItem: {
     flex: 1,
     alignItems: "center",
-    padding: 10
-  }
+    padding: 10,
+  },
 });
 
 export default function Main() {
