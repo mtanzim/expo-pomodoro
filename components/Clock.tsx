@@ -77,7 +77,7 @@ const Clock = ({
     if (clockState === ClockState.DONE) {
       // register task on the backend
       if (clockType === ClockTypes.WORK) {
-        completeTask(title, duration, category?.id);
+        completeTask(title, duration - timeLeft, category?.id);
       }
       handleSessionDone();
     }

@@ -36,7 +36,7 @@ export const useTasks = (onSuccess?: Callback, onFailure?: Callback) => {
       const { name: title } = res;
       if (title) {
         setTasks(curCat => curCat.concat(res));
-        onSuccess && onSuccess("Completed task");
+        // onSuccess && onSuccess("Completed task");
       }
     } catch (err) {
       onFailure && onFailure(err?.message);

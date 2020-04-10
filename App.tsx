@@ -38,8 +38,8 @@ enum TABS {
 }
 
 const ClockDurations = new Map<ClockTypes, number>([
-  [ClockTypes.WORK, 25],
-  [ClockTypes.BREAK, 5],
+  [ClockTypes.WORK, 25 * 60],
+  [ClockTypes.BREAK, 5 * 60],
 ]);
 
 const App = () => {
@@ -67,7 +67,9 @@ const App = () => {
   };
 
   const onSessionDone = () => {
-    setSnackMsg(`${curTasks[0].name} Completed!`);
+    setSnackMsg(
+      `${clockType === ClockTypes.WORK ? curTasks[0].name : "Break"} Completed!`
+    );
     remQtyFromTask(curTasks[0].id);
     toggleClockType();
   };
