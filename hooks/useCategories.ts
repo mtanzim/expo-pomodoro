@@ -24,10 +24,11 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
   }, []);
   const addCategory = async (newCat: string) => {
     try {
+      if (!newCat) throw new Error("Category cannot be empty!");
       const [res, _] = await catServices.add({ name: newCat });
       const { name } = res;
       if (name) {
-        setCategories(curCat => curCat.concat(res));
+        setCategories((curCat) => curCat.concat(res));
         onSuccess && onSuccess("Added Category");
       }
     } catch (err) {
@@ -38,7 +39,7 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
     try {
       await catServices.rem(id);
       setCategories((curCat: ICategory[]) =>
-        curCat.filter(cat => cat.id !== id)
+        curCat.filter((cat) => cat.id !== id)
       );
       onSuccess && onSuccess("Removed Category");
     } catch (err) {

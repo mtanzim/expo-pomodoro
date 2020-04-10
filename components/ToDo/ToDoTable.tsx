@@ -53,7 +53,7 @@ const ToDoTable = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "50%",
+    width: "90%",
     alignSelf: "center",
   },
 });

@@ -85,7 +85,7 @@ const Login = ({ setErrMsg, loginApp }: IProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "20%",
+    width: "90%",
     // flexDirection: "row",
     alignSelf: "center",
     justifyContent: "center"

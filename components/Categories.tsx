@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Chip, IconButton, TextInput } from "react-native-paper";
+import { Chip, TextInput, Button } from "react-native-paper";
 import { useCategories } from "../hooks/useCategories";
 import { ICategory } from "../interfaces";
 const Item = ({
@@ -41,7 +41,12 @@ const Categories = ({ setSnackMsg }: CatProps) => {
           value={newCat}
           onChangeText={setNewCat}
         />
-        <IconButton icon="plus" onPress={() => addCategory(newCat) as any} />
+        <Button
+          compact
+          onPress={() => addCategory(newCat) as any}
+        >
+          Add Category
+        </Button>
       </View>
       <View style={styles.catContainer}>
         {isLoading ? (
@@ -63,31 +68,19 @@ const Categories = ({ setSnackMsg }: CatProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     alignSelf: "center",
-    margin: 8,
-    width: "50%",
+    width: "90%",
+  },
+  formContainer: {
+    flex: 1,
   },
   catContainer: {
     flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
-    margin: 4,
     alignItems: "center",
     justifyContent: "flex-start",
-  },
-  textContainer: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  formContainer: {
-    padding: 8,
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    marginTop: 24,
   },
   item: {
     margin: 4,
