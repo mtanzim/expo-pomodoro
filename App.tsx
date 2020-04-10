@@ -14,6 +14,7 @@ import ToDo from "./components/ToDo";
 import { LOCALSTORAGE_KEY_NAME } from "./constants";
 import { ICategory, IToDo } from "./interfaces";
 import { taskReducer } from "./reducers";
+import ToDoForm from "./components/ToDoForm";
 
 const UNCATEGORIZED = "Uncategorized";
 
@@ -152,14 +153,15 @@ const App = () => {
             category={curTasks[0]?.category}
           />
           {curPage === TABS.TODO && (
-            <ToDo
-              curTasks={curTasks}
-              addQtyToTask={addQtyToTask}
-              addTask={addTask}
-              remQtyFromTask={remQtyFromTask}
-              delTask={delTask}
-              setSnackMsg={setSnackMsg}
-            />
+            <>
+              <ToDoForm setSnackMsg={setSnackMsg} addTask={addTask} />
+              <ToDo
+                curTasks={curTasks}
+                addQtyToTask={addQtyToTask}
+                remQtyFromTask={remQtyFromTask}
+                delTask={delTask}
+              />
+            </>
           )}
           {curPage === TABS.CATEGORIES && (
             <Categories setSnackMsg={setSnackMsg} />
