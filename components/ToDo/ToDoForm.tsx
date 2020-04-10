@@ -1,15 +1,8 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import {
-  Chip,
-  DataTable,
-  IconButton,
-  Menu,
-  TextInput,
-  Button,
-} from "react-native-paper";
+import { Button, Chip, Menu, TextInput } from "react-native-paper";
 import { useCategories } from "../../hooks/useCategories";
-import { ICategory, IToDo } from "../../interfaces";
+import { ICategory } from "../../interfaces";
 
 export interface ToDoFormProps {
   addTask: (newTask: string, qty: number, category?: ICategory) => void;

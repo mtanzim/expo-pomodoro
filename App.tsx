@@ -14,7 +14,6 @@ import ToDo from "./components/ToDo/";
 import { LOCALSTORAGE_KEY_NAME } from "./constants";
 import { ICategory, IToDo } from "./interfaces";
 import { taskReducer } from "./reducers";
-import ToDoForm from "./components/ToDo/ToDoForm";
 
 const UNCATEGORIZED = "Uncategorized";
 

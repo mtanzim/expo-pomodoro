@@ -1,15 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
-import {
-  Chip,
-  DataTable,
-  IconButton,
-  Menu,
-  TextInput,
-  Button,
-} from "react-native-paper";
-import { useCategories } from "../../hooks/useCategories";
-import { ICategory, IToDo } from "../../interfaces";
+import { DataTable, IconButton } from "react-native-paper";
+import { IToDo } from "../../interfaces";
 
 export interface ToDoProps {
   curTasks: IToDo[];

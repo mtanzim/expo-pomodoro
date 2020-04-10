@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
-import { Chip, IconButton, TextInput, HelperText } from "react-native-paper";
-import { ICategory } from "../interfaces";
+import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { Chip, IconButton, TextInput } from "react-native-paper";
 import { useCategories } from "../hooks/useCategories";
+import { ICategory } from "../interfaces";
 const Item = ({
   category,
-  rem
+  rem,
 }: {
   category: ICategory;
   rem: (id: string) => void;
@@ -47,7 +47,7 @@ const Categories = ({ setSnackMsg }: CatProps) => {
         {isLoading ? (
           <Text> Loading</Text>
         ) : (
-          categories.map(item => (
+          categories.map((item) => (
             <Item
               category={item}
               rem={() => remCategory(item.id)}
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
     margin: 8,
-    width: "50%"
+    width: "50%",
   },
   catContainer: {
     flex: 1,
@@ -75,23 +75,23 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     margin: 4,
     alignItems: "center",
-    justifyContent: "flex-start"
+    justifyContent: "flex-start",
   },
   textContainer: {
     flex: 1,
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
   },
   formContainer: {
     padding: 8,
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   item: {
-    margin: 4
-  }
+    margin: 4,
+  },
 });
 
 export default Categories;
