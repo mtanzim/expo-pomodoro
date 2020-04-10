@@ -10,11 +10,11 @@ import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "./actionTypes";
 import Categories from "./components/Categories";
 import Clock, { ClockTypes } from "./components/Clock";
 import Login from "./components/Login";
-import ToDo from "./components/ToDo";
+import ToDo from "./components/ToDo/";
 import { LOCALSTORAGE_KEY_NAME } from "./constants";
 import { ICategory, IToDo } from "./interfaces";
 import { taskReducer } from "./reducers";
-import ToDoForm from "./components/ToDoForm";
+import ToDoForm from "./components/ToDo/ToDoForm";
 
 const UNCATEGORIZED = "Uncategorized";
 
@@ -153,15 +153,14 @@ const App = () => {
             category={curTasks[0]?.category}
           />
           {curPage === TABS.TODO && (
-            <>
-              <ToDoForm setSnackMsg={setSnackMsg} addTask={addTask} />
-              <ToDo
-                curTasks={curTasks}
-                addQtyToTask={addQtyToTask}
-                remQtyFromTask={remQtyFromTask}
-                delTask={delTask}
-              />
-            </>
+            <ToDo
+              setSnackMsg={setSnackMsg}
+              addTask={addTask}
+              curTasks={curTasks}
+              addQtyToTask={addQtyToTask}
+              remQtyFromTask={remQtyFromTask}
+              delTask={delTask}
+            />
           )}
           {curPage === TABS.CATEGORIES && (
             <Categories setSnackMsg={setSnackMsg} />

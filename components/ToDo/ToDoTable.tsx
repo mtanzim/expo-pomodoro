@@ -8,8 +8,8 @@ import {
   TextInput,
   Button,
 } from "react-native-paper";
-import { useCategories } from "../hooks/useCategories";
-import { ICategory, IToDo } from "../interfaces";
+import { useCategories } from "../../hooks/useCategories";
+import { ICategory, IToDo } from "../../interfaces";
 
 export interface ToDoProps {
   curTasks: IToDo[];
@@ -18,7 +18,7 @@ export interface ToDoProps {
   delTask: (id: string) => void;
 }
 
-const ToDo = ({
+const ToDoTable = ({
   curTasks,
   addQtyToTask,
   remQtyFromTask,
@@ -65,4 +65,4 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 });
-export default ToDo;
+export default ToDoTable;

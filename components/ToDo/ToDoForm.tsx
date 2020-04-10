@@ -8,8 +8,8 @@ import {
   TextInput,
   Button,
 } from "react-native-paper";
-import { useCategories } from "../hooks/useCategories";
-import { ICategory, IToDo } from "../interfaces";
+import { useCategories } from "../../hooks/useCategories";
+import { ICategory, IToDo } from "../../interfaces";
 
 export interface ToDoFormProps {
   addTask: (newTask: string, qty: number, category?: ICategory) => void;
