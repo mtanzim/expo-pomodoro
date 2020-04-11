@@ -10,14 +10,12 @@ export function ErrorOnApiFail(
 ): any {
   const originalFunction = descriptor.value;
 
-  descriptor.value = async function(payload?: any) {
+  descriptor.value = async function (payload?: any) {
     const boundOriginalFunction = originalFunction.bind(this);
     const [resJSON, result] = await boundOriginalFunction(payload);
-    console.log(result);
     if (!result.ok) {
       if (result?.status === 401) {
         localStorage.removeItem(LOCALSTORAGE_KEY_NAME);
-        console.log("Removed token");
       }
       throw new Error(result?.error?.message || "Something went wrong");
     }

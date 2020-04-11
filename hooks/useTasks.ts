@@ -8,12 +8,19 @@ type Callback = (msg: string) => void;
 export const useTasks = (onSuccess?: Callback, onFailure?: Callback) => {
   const [tasks, setTasks] = useState<IToDo[]>([]);
   const [isLoading, setLoading] = useState(false);
+
+  // TODO: do this in the backend
+  const processTasks = (tasks: IToDo[]) => {
+    const processedTasks = tasks.filter((_task, idx) => idx < 5);
+    return processedTasks;
+  };
+
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
       try {
         const [res, _] = await taskServices.get();
-        setTasks(res);
+        setTasks(processTasks(res));
       } catch (err) {
         setTasks([]);
         onFailure && onFailure(err?.message);
@@ -31,12 +38,11 @@ export const useTasks = (onSuccess?: Callback, onFailure?: Callback) => {
       const [res, _] = await taskServices.add({
         name,
         duration,
-        categoryId
+        categoryId,
       });
       const { name: title } = res;
       if (title) {
-        setTasks(curCat => curCat.concat(res));
-        // onSuccess && onSuccess("Completed task");
+        setTasks((curCat) => curCat.concat(res));
       }
     } catch (err) {
       onFailure && onFailure(err?.message);
@@ -45,7 +51,7 @@ export const useTasks = (onSuccess?: Callback, onFailure?: Callback) => {
   const remTask = async (id: string) => {
     try {
       await taskServices.rem(id);
-      setTasks((curCat: IToDo[]) => curCat.filter(cat => cat.id !== id));
+      setTasks((curCat: IToDo[]) => curCat.filter((cat) => cat.id !== id));
       onSuccess && onSuccess("Removed task");
     } catch (err) {
       onFailure && onFailure(err?.message);

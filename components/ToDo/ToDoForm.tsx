@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "90%",
     alignSelf: "center",
+    marginBottom: 10,
   },
   textInputStyle: {
     marginBottom: 2,

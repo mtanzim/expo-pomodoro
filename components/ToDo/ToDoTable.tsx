@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "90%",
     alignSelf: "center",
+    marginBottom: 20,
   },
 });
 export default ToDoTable;

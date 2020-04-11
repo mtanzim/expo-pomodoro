@@ -140,11 +140,11 @@ const App = () => {
               icon="message-bulleted"
               onPress={() => setPage(TABS.TODO)}
             />
+            <Appbar.Action icon="star" onPress={() => setPage(TABS.FAVES)} />
             <Appbar.Action
               icon="shape"
               onPress={() => setPage(TABS.CATEGORIES)}
             />
-            <Appbar.Action icon="star" onPress={() => setPage(TABS.FAVES)} />
             <Appbar.Action icon="logout" onPress={logoutApp} />
           </Appbar>
           <Clock
@@ -167,7 +167,9 @@ const App = () => {
           {curPage === TABS.CATEGORIES && (
             <Categories setSnackMsg={setSnackMsg} />
           )}
-          {curPage === TABS.FAVES && <ToDoFaves setSnackMsg={setSnackMsg} />}
+          {curPage === TABS.FAVES && (
+            <ToDoFaves addTaskToToDo={addTask} setSnackMsg={setSnackMsg} />
+          )}
         </View>
       )}
       <Snackbar visible={snackMsg !== ""} onDismiss={() => setSnackMsg("")}>

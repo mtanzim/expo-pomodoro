@@ -1,15 +1,28 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Task } from "react-native";
 import { DataTable, IconButton } from "react-native-paper";
-import { IToDo, IFaveToDo } from "../../interfaces";
+import { IToDo, IFaveToDo, ICategory } from "../../interfaces";
 import { useFaveTasks } from "../../hooks/useFaveTasks";
 
 interface ToDoFavesTableProps {
   tasks: IFaveToDo[];
   remTask: (id: string) => void;
+  addTaskToToDo: (newTask: string, qty: number, category?: ICategory) => void;
+  setSnackMsg: (msg: string) => void;
 }
 
-const ToDoFavesTable = ({ tasks, remTask }: ToDoFavesTableProps) => {
+const ToDoFavesTable = ({
+  tasks,
+  remTask,
+  addTaskToToDo,
+  setSnackMsg,
+}: ToDoFavesTableProps) => {
+  const addTasksToApp = (task: IFaveToDo) => {
+    const { name, category } = task;
+    addTaskToToDo(name, 1, category);
+    setSnackMsg("Added task to the To Do List");
+  };
+
   return (
     <View style={styles.container}>
       <DataTable>
@@ -17,12 +30,16 @@ const ToDoFavesTable = ({ tasks, remTask }: ToDoFavesTableProps) => {
           <DataTable.Title>Task</DataTable.Title>
           <DataTable.Title>Category</DataTable.Title>
           <DataTable.Title numeric>{""}</DataTable.Title>
+          <DataTable.Title numeric>{""}</DataTable.Title>
         </DataTable.Header>
         {tasks &&
           tasks.map((task) => (
             <DataTable.Row key={task.id}>
               <DataTable.Cell>{task.name}</DataTable.Cell>
               <DataTable.Cell>{task.category?.name}</DataTable.Cell>
+              <DataTable.Cell>
+                <IconButton icon="plus" onPress={() => addTasksToApp(task)} />
+              </DataTable.Cell>
               <DataTable.Cell>
                 <IconButton icon="delete" onPress={() => remTask(task.id)} />
               </DataTable.Cell>
@@ -37,7 +54,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "90%",
     alignSelf: "center",
-    marginTop: 40,
   },
 });
 export default ToDoFavesTable;
