@@ -21,13 +21,8 @@ const UNCATEGORIZED = "Uncategorized";
 const exampleTasks: IToDo[] = [
   {
     id: uuid.v4(),
-    name: "trading-hub",
-    remaining: 4,
-  },
-  {
-    id: uuid.v4(),
-    name: "trading-platform",
-    remaining: 6,
+    name: "Welcome",
+    remaining: 1,
   },
 ];
 
@@ -91,9 +86,17 @@ const App = () => {
     }
   });
 
+  // TODO: these finds are super slow, improve performance!
   const addTask = (newTask: string, qty: number, category?: ICategory) => {
     if (newTask === "") {
       setSnackMsg("Task cannot be empty!");
+      return;
+    }
+    const existingTask = curTasks.find(
+      (item) => item.name === newTask && item.category?.id === category?.id
+    );
+    if (existingTask) {
+      taskDispatch({ type: INCR_ONE, payload: existingTask });
       return;
     }
     taskDispatch({
