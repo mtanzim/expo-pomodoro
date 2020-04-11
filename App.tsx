@@ -10,7 +10,8 @@ import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "./actionTypes";
 import Categories from "./components/Categories";
 import Clock, { ClockTypes } from "./components/Clock";
 import Login from "./components/Login";
-import ToDo from "./components/ToDo/";
+import ToDo from "./components/ToDo/ToDo";
+import ToDoFaves from "./components/ToDo/ToDoFaves";
 import { LOCALSTORAGE_KEY_NAME } from "./constants";
 import { ICategory, IToDo } from "./interfaces";
 import { taskReducer } from "./reducers";
@@ -33,6 +34,7 @@ const exampleTasks: IToDo[] = [
 enum TABS {
   TODO,
   CATEGORIES,
+  FAVES,
   STATS,
   PROFILE,
 }
@@ -142,6 +144,7 @@ const App = () => {
               icon="shape"
               onPress={() => setPage(TABS.CATEGORIES)}
             />
+            <Appbar.Action icon="star" onPress={() => setPage(TABS.FAVES)} />
             <Appbar.Action icon="logout" onPress={logoutApp} />
           </Appbar>
           <Clock
@@ -164,6 +167,7 @@ const App = () => {
           {curPage === TABS.CATEGORIES && (
             <Categories setSnackMsg={setSnackMsg} />
           )}
+          {curPage === TABS.FAVES && <ToDoFaves setSnackMsg={setSnackMsg} />}
         </View>
       )}
       <Snackbar visible={snackMsg !== ""} onDismiss={() => setSnackMsg("")}>

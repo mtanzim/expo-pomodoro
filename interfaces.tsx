@@ -1,7 +1,10 @@
-export interface IToDo {
+export interface IFaveToDo {
   id: string;
   category?: ICategory;
   name: string;
+}
+
+export interface IToDo extends IFaveToDo {
   remaining: number;
 }
 

@@ -5,11 +5,11 @@ import { useCategories } from "../../hooks/useCategories";
 import { ICategory } from "../../interfaces";
 
 export interface ToDoFormProps {
-  addTask: (newTask: string, qty: number, category?: ICategory) => void;
   setSnackMsg: (msg: string) => void;
+  addTask?: (newTask: string, qty: number, category?: ICategory) => void;
+  addFaveTask?: (name: string, categoryId?: string) => Promise<void>;
 }
-
-const ToDoForm = ({ addTask, setSnackMsg }: ToDoFormProps) => {
+const ToDoForm = ({ addTask, setSnackMsg, addFaveTask }: ToDoFormProps) => {
   const { categories } = useCategories(setSnackMsg, setSnackMsg);
   const [catVisible, setCatVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<
@@ -25,8 +25,13 @@ const ToDoForm = ({ addTask, setSnackMsg }: ToDoFormProps) => {
     setCatVisible(false);
   };
 
-  const addTaskAndClear = () => {
-    addTask(newTask, qtyTasksToAdd, selectedCategory);
+  const addTaskAndClear = async () => {
+    if (addTask) {
+      addTask(newTask, qtyTasksToAdd, selectedCategory);
+    }
+    if (addFaveTask) {
+      await addFaveTask(newTask, selectedCategory?.id);
+    }
     setNewTask("");
     setQtyTasksToAdd(1);
   };
