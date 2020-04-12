@@ -5,6 +5,7 @@ import { IToDo } from "../../interfaces";
 
 export interface ToDoProps {
   curTasks: IToDo[];
+  isWorking?: boolean;
   addQtyToTask: (id: string) => void;
   remQtyFromTask: (id: string) => void;
   delTask: (id: string) => void;

@@ -1,26 +1,24 @@
 import { useState, useEffect } from "react";
 import { IToDo } from "../interfaces";
-import { TasksRequests } from "../services/Tasks";
+import { TasksRequests, IToDoGet } from "../services/Tasks";
 const taskServices = new TasksRequests();
 
 type Callback = (msg: string) => void;
 
-export const useTasks = (onSuccess?: Callback, onFailure?: Callback) => {
-  const [tasks, setTasks] = useState<IToDo[]>([]);
+export const useTasks = (
+  onSuccess?: Callback,
+  onFailure?: Callback,
+  trigger?: boolean
+) => {
+  const [tasks, setTasks] = useState<IToDoGet[]>([]);
   const [isLoading, setLoading] = useState(false);
-
-  // TODO: do this in the backend
-  const processTasks = (tasks: IToDo[]) => {
-    const processedTasks = tasks.filter((_task, idx) => idx < 5);
-    return processedTasks;
-  };
 
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
       try {
-        const [res, _] = await taskServices.get();
-        setTasks(processTasks(res));
+        const [res, _] = await taskServices.getToday();
+        setTasks(res);
       } catch (err) {
         setTasks([]);
         onFailure && onFailure(err?.message);
@@ -28,7 +26,7 @@ export const useTasks = (onSuccess?: Callback, onFailure?: Callback) => {
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [trigger]);
   const addTask = async (
     name: string,
     duration: number,
@@ -51,7 +49,7 @@ export const useTasks = (onSuccess?: Callback, onFailure?: Callback) => {
   const remTask = async (id: string) => {
     try {
       await taskServices.rem(id);
-      setTasks((curCat: IToDo[]) => curCat.filter((cat) => cat.id !== id));
+      setTasks((curCat: IToDoGet[]) => curCat.filter((cat) => cat.id !== id));
       onSuccess && onSuccess("Removed task");
     } catch (err) {
       onFailure && onFailure(err?.message);

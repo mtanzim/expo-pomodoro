@@ -165,6 +165,7 @@ const App = () => {
               addQtyToTask={addQtyToTask}
               remQtyFromTask={remQtyFromTask}
               delTask={delTask}
+              isWorking={clockType === ClockTypes.WORK}
             />
           )}
           {curPage === TABS.CATEGORIES && (

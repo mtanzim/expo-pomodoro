@@ -12,6 +12,7 @@ const ToDo = ({
   addQtyToTask,
   remQtyFromTask,
   delTask,
+  isWorking
 }: ToDoFormProps & ToDoProps) => (
   <View style={styles.container}>
     <ToDoForm setSnackMsg={setSnackMsg} addTask={addTask} />
@@ -23,7 +24,7 @@ const ToDo = ({
       delTask={delTask}
     />
     <Title>Completed</Title>
-    <ToDoCompletedTable />
+    <ToDoCompletedTable isWorking={isWorking} setSnackMsg={setSnackMsg}/>
   </View>
 );
 
