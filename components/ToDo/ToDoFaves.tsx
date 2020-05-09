@@ -9,17 +9,18 @@ import ToDoForm from "./ToDoForm";
 interface ToDoFavesProps {
   setSnackMsg: (msg: string) => void;
   addTaskToToDo: (newTask: string, qty: number, category?: ICategory) => void;
+  isVisible: boolean;
 }
 
-const ToDoFaves = ({ setSnackMsg, addTaskToToDo }: ToDoFavesProps) => {
-  const { addTask: addFaveTask, remTask, tasks } = useFaveTasks(
-    setSnackMsg,
-    setSnackMsg
-  );
+const ToDoFaves = ({
+  setSnackMsg,
+  addTaskToToDo,
+  isVisible,
+}: ToDoFavesProps) => {
+  const { remTask, tasks } = useFaveTasks(setSnackMsg, setSnackMsg, isVisible);
 
   return (
     <View style={styles.container}>
-      <ToDoForm setSnackMsg={setSnackMsg} addFaveTask={addFaveTask} />
       <Title>Favorites</Title>
       <ToDoFavesTable
         tasks={tasks}

@@ -5,7 +5,11 @@ const taskServices = new FaveTasksRequests();
 
 type Callback = (msg: string) => void;
 
-export const useFaveTasks = (onSuccess?: Callback, onFailure?: Callback) => {
+export const useFaveTasks = (
+  onSuccess?: Callback,
+  onFailure?: Callback,
+  trigger?: boolean
+) => {
   const [tasks, setTasks] = useState<IFaveToDo[]>([]);
   const [isLoading, setLoading] = useState(false);
   useEffect(() => {
@@ -21,7 +25,7 @@ export const useFaveTasks = (onSuccess?: Callback, onFailure?: Callback) => {
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [trigger]);
   const addTask = async (name: string, categoryId?: string) => {
     try {
       const [res, _] = await taskServices.add({

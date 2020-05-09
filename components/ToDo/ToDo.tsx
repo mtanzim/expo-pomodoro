@@ -1,21 +1,23 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Title } from "react-native-paper";
+import { Title, Surface } from "react-native-paper";
 import ToDoCompletedTable from "./ToDoCompletedTable";
 import ToDoForm, { ToDoFormProps } from "./ToDoForm";
-import ToDoTable, { ToDoProps } from "./ToDoTable";
+import ToDoTable, { ToDoTableProps } from "./ToDoTable";
+
+interface ToDoProps extends ToDoTableProps {
+  setSnackMsg: (msg: string) => void;
+}
 
 const ToDo = ({
-  setSnackMsg,
-  addTask,
   curTasks,
   addQtyToTask,
   remQtyFromTask,
   delTask,
-  isWorking
-}: ToDoFormProps & ToDoProps) => (
+  isWorking,
+  setSnackMsg,
+}: ToDoProps) => (
   <View style={styles.container}>
-    <ToDoForm setSnackMsg={setSnackMsg} addTask={addTask} />
     <Title>To Do List</Title>
     <ToDoTable
       curTasks={curTasks}
@@ -23,8 +25,9 @@ const ToDo = ({
       remQtyFromTask={remQtyFromTask}
       delTask={delTask}
     />
+
     <Title>Completed</Title>
-    <ToDoCompletedTable isWorking={isWorking} setSnackMsg={setSnackMsg}/>
+    <ToDoCompletedTable isWorking={isWorking} setSnackMsg={setSnackMsg} />
   </View>
 );
 

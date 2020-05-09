@@ -5,7 +5,11 @@ const catServices = new CategoriesRequests();
 
 type Callback = (msg: string) => void;
 
-export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
+export const useCategories = (
+  onSuccess?: Callback,
+  onFailure?: Callback,
+  trigger?: boolean
+) => {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [isLoading, setLoading] = useState(false);
   useEffect(() => {
@@ -21,7 +25,7 @@ export const useCategories = (onSuccess?: Callback, onFailure?: Callback) => {
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [trigger]);
   const addCategory = async (newCat: string) => {
     try {
       if (!newCat) throw new Error("Category cannot be empty!");

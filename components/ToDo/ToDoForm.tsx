@@ -1,15 +1,36 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, Chip, Menu, TextInput } from "react-native-paper";
+import {
+  Button,
+  Chip,
+  Menu,
+  TextInput,
+  Portal,
+  Modal,
+  Surface,
+} from "react-native-paper";
 import { useCategories } from "../../hooks/useCategories";
 import { ICategory } from "../../interfaces";
 
 export interface ToDoFormProps {
   setSnackMsg: (msg: string) => void;
+  onModalDismiss: () => void;
   addTask?: (newTask: string, qty: number, category?: ICategory) => void;
   addFaveTask?: (name: string, categoryId?: string) => Promise<void>;
 }
-const ToDoForm = ({ addTask, setSnackMsg, addFaveTask }: ToDoFormProps) => {
+
+// TODO: clean up fave vs regular task logic
+const ToDoForm = ({
+  addTask,
+  setSnackMsg,
+  addFaveTask,
+  onModalDismiss,
+}: ToDoFormProps) => {
+  if (addFaveTask && addTask) {
+    console.error("Invalid use of component");
+    return null;
+  }
+
   const { categories } = useCategories(setSnackMsg, setSnackMsg);
   const [catVisible, setCatVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<
@@ -34,9 +55,10 @@ const ToDoForm = ({ addTask, setSnackMsg, addFaveTask }: ToDoFormProps) => {
     }
     setNewTask("");
     setQtyTasksToAdd(1);
+    onModalDismiss();
   };
   return (
-    <View style={styles.container}>
+    <>
       <TextInput
         mode="outlined"
         dense
@@ -67,9 +89,9 @@ const ToDoForm = ({ addTask, setSnackMsg, addFaveTask }: ToDoFormProps) => {
         ))}
       </Menu>
       <Button compact onPress={addTaskAndClear}>
-        Add Task
+        {`Add Task ${addFaveTask ? "to faves" : ""}`}
       </Button>
-    </View>
+    </>
   );
 };
 
@@ -79,6 +101,12 @@ const styles = StyleSheet.create({
     width: "90%",
     alignSelf: "center",
     marginBottom: 10,
+  },
+  modalContainer: {
+    width: "90%",
+    margin: "auto",
+    paddingVertical: 24,
+    paddingHorizontal: 8,
   },
   textInputStyle: {
     marginBottom: 2,

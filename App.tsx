@@ -4,6 +4,7 @@ import {
   Appbar,
   Provider as PaperProvider,
   Snackbar,
+  FAB,
 } from "react-native-paper";
 import uuid from "uuid";
 import { ADD_TODO, DECR_ONE, INCR_ONE, REM_TODO } from "./actionTypes";
@@ -11,12 +12,14 @@ import Categories from "./components/Categories";
 import Clock, { ClockTypes } from "./components/Clock";
 import Login from "./components/Login";
 import ToDo from "./components/ToDo/ToDo";
+import ToDoForm from "./components/ToDo/ToDoForm";
 import ToDoFaves from "./components/ToDo/ToDoFaves";
 import { LOCALSTORAGE_KEY_NAME } from "./constants";
 import { ICategory, IToDo } from "./interfaces";
 import { taskReducer } from "./reducers";
-
-const UNCATEGORIZED = "Uncategorized";
+import CategoriesForm from "./components/CategoriesForm";
+import { useFaveTasks } from "./hooks/useFaveTasks";
+import AppModal from "./components/AppModal";
 
 const exampleTasks: IToDo[] = [
   {
@@ -46,6 +49,7 @@ const App = () => {
   const [curPage, setPage] = useState(TABS.TODO);
   const [snackMsg, setSnackMsg] = useState("");
   const [clockType, setClockType] = useState(ClockTypes.WORK);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const toggleClockType = () => {
     setClockType((curClockType) =>
@@ -132,6 +136,12 @@ const App = () => {
     taskToUpdate && taskDispatch({ type: REM_TODO, payload: taskToUpdate });
   };
 
+  const { addTask: addFaveTask } = useFaveTasks(
+    setSnackMsg,
+    setSnackMsg,
+    modalVisible
+  );
+
   return (
     <View style={styles.container}>
       {!token ? (
@@ -158,27 +168,73 @@ const App = () => {
             category={curTasks[0]?.category}
           />
           {curPage === TABS.TODO && (
-            <ToDo
-              setSnackMsg={setSnackMsg}
-              addTask={addTask}
-              curTasks={curTasks}
-              addQtyToTask={addQtyToTask}
-              remQtyFromTask={remQtyFromTask}
-              delTask={delTask}
-              isWorking={clockType === ClockTypes.WORK}
-            />
+            <>
+              <ToDo
+                setSnackMsg={setSnackMsg}
+                curTasks={curTasks}
+                addQtyToTask={addQtyToTask}
+                remQtyFromTask={remQtyFromTask}
+                delTask={delTask}
+                isWorking={clockType === ClockTypes.WORK}
+              />
+              <AppModal
+                onModalDismiss={() => setModalVisible(false)}
+                isVisible={modalVisible}
+              >
+                <ToDoForm
+                  addTask={addTask}
+                  setSnackMsg={setSnackMsg}
+                  onModalDismiss={() => setModalVisible(false)}
+                />
+              </AppModal>
+            </>
           )}
           {curPage === TABS.CATEGORIES && (
-            <Categories setSnackMsg={setSnackMsg} />
+            <>
+              <Categories isVisible={modalVisible} setSnackMsg={setSnackMsg} />
+              <AppModal
+                onModalDismiss={() => setModalVisible(false)}
+                isVisible={modalVisible}
+              >
+                <CategoriesForm
+                  setSnackMsg={setSnackMsg}
+                  onModalDismiss={() => setModalVisible(false)}
+                />
+              </AppModal>
+            </>
           )}
           {curPage === TABS.FAVES && (
-            <ToDoFaves addTaskToToDo={addTask} setSnackMsg={setSnackMsg} />
+            <>
+              <ToDoFaves
+                isVisible={modalVisible}
+                addTaskToToDo={addTask}
+                setSnackMsg={setSnackMsg}
+              />
+              <AppModal
+                onModalDismiss={() => setModalVisible(false)}
+                isVisible={modalVisible}
+              >
+                <ToDoForm
+                  addFaveTask={addFaveTask}
+                  setSnackMsg={setSnackMsg}
+                  onModalDismiss={() => setModalVisible(false)}
+                />
+              </AppModal>
+            </>
           )}
         </View>
       )}
       <Snackbar visible={snackMsg !== ""} onDismiss={() => setSnackMsg("")}>
         {snackMsg}
       </Snackbar>
+      {token && (
+        <FAB
+          style={styles.fab}
+          small
+          icon="plus"
+          onPress={() => setModalVisible(true)}
+        />
+      )}
     </View>
   );
 };
@@ -194,6 +250,13 @@ const styles = StyleSheet.create({
   nav: {
     flexDirection: "row",
     justifyContent: "center",
+  },
+  fab: {
+    position: "absolute",
+    marginRight: 24,
+    marginBottom: 24,
+    right: 0,
+    bottom: 0,
   },
   navItem: {
     flex: 1,

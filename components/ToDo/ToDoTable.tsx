@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { DataTable, IconButton } from "react-native-paper";
 import { IToDo } from "../../interfaces";
 
-export interface ToDoProps {
+export interface ToDoTableProps {
   curTasks: IToDo[];
   isWorking?: boolean;
   addQtyToTask: (id: string) => void;
@@ -16,7 +16,7 @@ const ToDoTable = ({
   addQtyToTask,
   remQtyFromTask,
   delTask,
-}: ToDoProps) => {
+}: ToDoTableProps) => {
   return (
     <View style={styles.container}>
       <DataTable>
