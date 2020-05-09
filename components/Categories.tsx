@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Chip } from "react-native-paper";
+import { Chip, Title } from "react-native-paper";
 import { useCategories } from "../hooks/useCategories";
 import { ICategory } from "../interfaces";
+
 const Item = ({
   category,
   rem,
@@ -26,26 +27,41 @@ const Categories = ({ setSnackMsg, isVisible }: CatProps) => {
   };
 
   useEffect(() => {}, [isVisible]);
-  const { isLoading, categories, remCategory } = useCategories(cb, cb, isVisible);
+  const { isLoading, categories, remCategory } = useCategories(
+    cb,
+    cb,
+    isVisible
+  );
 
   return (
-    <View style={styles.catContainer}>
+    <View style={styles.container}>
       {isLoading ? (
         <Text> Loading</Text>
       ) : (
-        categories.map((item) => (
-          <Item
-            category={item}
-            rem={() => remCategory(item.id)}
-            key={item.id}
-          />
-        ))
+        <>
+          <Title>Categories</Title>
+          <View style={styles.catContainer}>
+            {categories.map((item) => (
+              <Item
+                category={item}
+                rem={() => remCategory(item.id)}
+                key={item.id}
+              />
+            ))}
+          </View>
+        </>
       )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: "90%",
+    alignSelf: "center",
+    alignItems: "center",
+  },
   catContainer: {
     flex: 1,
     flexDirection: "row",
@@ -53,7 +69,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     alignSelf: "center",
-    width: "90%",
     marginTop: 24,
   },
   item: {

@@ -20,8 +20,9 @@ const styles = StyleSheet.create({
   modalContainer: {
     width: "90%",
     margin: "auto",
-    paddingVertical: 24,
-    paddingHorizontal: 8,
+    paddingVertical: 48,
+    paddingHorizontal: 12,
+    borderRadius: 8,
   },
 });
 

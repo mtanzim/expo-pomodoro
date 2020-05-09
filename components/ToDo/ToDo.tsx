@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Title, Surface } from "react-native-paper";
+import { Switch, Title } from "react-native-paper";
 import ToDoCompletedTable from "./ToDoCompletedTable";
-import ToDoForm, { ToDoFormProps } from "./ToDoForm";
 import ToDoTable, { ToDoTableProps } from "./ToDoTable";
 
 interface ToDoProps extends ToDoTableProps {
@@ -16,20 +15,41 @@ const ToDo = ({
   delTask,
   isWorking,
   setSnackMsg,
-}: ToDoProps) => (
-  <View style={styles.container}>
-    <Title>To Do List</Title>
-    <ToDoTable
-      curTasks={curTasks}
-      addQtyToTask={addQtyToTask}
-      remQtyFromTask={remQtyFromTask}
-      delTask={delTask}
-    />
+}: ToDoProps) => {
+  const [isToDo, setIsToDo] = useState(true);
 
-    <Title>Completed</Title>
-    <ToDoCompletedTable isWorking={isWorking} setSnackMsg={setSnackMsg} />
-  </View>
-);
+  const renderInner = () => {
+    if (isToDo) {
+      return (
+        <>
+          <Title>To Do</Title>
+          <ToDoTable
+            curTasks={curTasks}
+            addQtyToTask={addQtyToTask}
+            remQtyFromTask={remQtyFromTask}
+            delTask={delTask}
+          />
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Title>Completed</Title>
+        <ToDoCompletedTable isWorking={isWorking} setSnackMsg={setSnackMsg} />
+      </>
+    );
+  };
+
+  return (
+    <>
+      <View style={styles.container}>
+        <Switch value={isToDo} onValueChange={() => setIsToDo((cur) => !cur)} />
+        {renderInner()}
+      </View>
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

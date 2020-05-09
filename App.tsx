@@ -42,6 +42,7 @@ const ClockDurations = new Map<ClockTypes, number>([
   [ClockTypes.BREAK, 5 * 60],
 ]);
 
+// TODO: clean up into page components
 const App = () => {
   const [token, setToken] = useState(
     localStorage.getItem(LOCALSTORAGE_KEY_NAME)
@@ -240,6 +241,13 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
+  fab: {
+    position: "absolute",
+    marginRight: 24,
+    marginBottom: 24,
+    right: 0,
+    top: 8,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -251,13 +259,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
-  fab: {
-    position: "absolute",
-    marginRight: 24,
-    marginBottom: 24,
-    right: 0,
-    bottom: 0,
-  },
+
   navItem: {
     flex: 1,
     alignItems: "center",
